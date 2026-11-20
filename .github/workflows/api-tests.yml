@@ -12,6 +12,11 @@ jobs:
     name: Execute API Automation Tests
     runs-on: ubuntu-latest
 
+    env:
+      TEST_ENV: staging
+      CLIENT_ID: ${{ secrets.CLIENT_ID }}
+      CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v5
@@ -31,24 +36,20 @@ jobs:
           python --version
           python -m pytest --version
           pip show allure-pytest
+          pip show python-dotenv
+          pip show email-validator
 
       - name: Debug Test Collection
         run: |
-          ls -la
-          ls -la tests/
           python -m pytest tests --collect-only -vv
 
       - name: Run API Tests
-        env:
-          TEST_ENV: staging
-          CLIENT_ID: ${{ secrets.CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
         run: |
-          python -m pytest tests -vv -s --alluredir=allure-results
+          python -m pytest tests -v --alluredir=allure-results
 
       - name: Upload Allure Results
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: allure-results
           path: allure-results/
