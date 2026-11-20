@@ -1,37 +1,52 @@
+
 name: API Test Automation
+
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
   api-tests:
+    name: Execute API Automation Tests
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+
+      - name: Set Up Python
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
+          cache: pip
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Verify Test Dependencies
+        run: |
+          python --version
+          pytest --version
+          pip show allure-pytest
+
       - name: Run Pytest with Allure
         env:
           TEST_ENV: staging
-          CLIENT_ID: ${{ secrets.CLIENT_ID || 'ci-client' }}
-          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET || 'ci-secret' }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
         run: |
-          pytest tests --alluredir=allure-results
+          python -m pytest tests -v --alluredir=allure-results
 
       - name: Upload Allure Results Artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: allure-results
-          path: allure-results
+          path: allure-results/
+          if-no-files-found: warn
+          retention-days: 14
