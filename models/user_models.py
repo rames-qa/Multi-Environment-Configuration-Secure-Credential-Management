@@ -1,8 +1,9 @@
-# models/user_models.py
 from pydantic import BaseModel, EmailStr
 
 class UserResponse(BaseModel):
     id: int
     name: str
+    username: str
     email: EmailStr
-    role: str
+    phone: str
+    website: str
