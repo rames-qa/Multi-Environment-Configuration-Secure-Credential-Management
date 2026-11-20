@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Test Automation Framework — Architecture, CI/CD &amp; Documentation</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --surface: #111827;
+      --surface-alt: #1f2937;
+      --code-bg: #030712;
+      --text: #f3f4f6;
+      --muted: #9ca3af;
+      --accent: #38bdf8;
+      --accent-hover: #7dd3fc;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --border: #374151;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Hero Header */
+    header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 55%, #0284c7 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 3rem 0 2.5rem;
+    }
+
+    .hero-top {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    header h1 {
+      margin: 0 0 0.5rem;
+      font-size: 2rem;
+      letter-spacing: -0.02em;
+    }
+
+    header .subtitle {
+      margin: 0 0 1.25rem;
+      color: #dbeafe;
+      max-width: 760px;
+      font-size: 1.05rem;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(34, 197, 94, 0.16);
+      border: 1px solid rgba(34, 197, 94, 0.5);
+      color: #86efac;
+      padding: 0.45rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 8px var(--success);
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .badge {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      padding: 0.28rem 0.7rem;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      color: #e0f2fe;
+    }
+
+    .repo-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.55rem 1rem;
+      border-radius: 7px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.15s ease;
+    }
+
+    .btn-primary {
+      background: #38bdf8;
+      color: #082f49;
+    }
+
+    .btn-primary:hover {
+      background: #7dd3fc;
+    }
+
+    .btn-secondary {
+      background: rgba(15, 23, 42, 0.65);
+      color: #f8fafc;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+    }
+
+    .btn-secondary:hover {
+      border-color: #38bdf8;
+      color: #38bdf8;
+    }
+
+    /* Sticky Navigation */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(17, 24, 39, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      padding: 0.7rem 0;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.86rem;
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      font-weight: 500;
+    }
+
+    .nav-links a:hover {
+      background: var(--surface-alt);
+      color: var(--accent);
+    }
+
+    /* Main Content */
+    main {
+      padding: 2.25rem 0 4rem;
+    }
+
+    section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.75rem;
+      margin-bottom: 1.75rem;
+    }
+
+    h2 {
+      margin: 0 0 1rem;
+      font-size: 1.35rem;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.65rem;
+    }
+
+    .sec-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      background: rgba(56, 189, 248, 0.16);
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      color: var(--accent);
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    h3 {
+      margin: 1.35rem 0 0.5rem;
+      font-size: 1.05rem;
+      color: #f9fafb;
+    }
+
+    p {
+      margin: 0 0 0.9rem;
+      color: #d1d5db;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: var(--code-bg);
+      color: #93c5fd;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.88em;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.15rem;
+      overflow-x: auto;
+      margin: 0.6rem 0 1.1rem;
+    }
+
+    pre code {
+      background: transparent;
+      color: #e5e7eb;
+      padding: 0;
+      font-size: 0.85rem;
+      line-height: 1.55;
+    }
+
+    /* Architecture Diagram Flow */
+    .diagram-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 0.85rem;
+      margin: 1rem 0 1.25rem;
+    }
+
+    .node {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--accent);
+      border-radius: 8px;
+      padding: 0.9rem;
+    }
+
+    .node strong {
+      display: block;
+      color: #f9fafb;
+      font-size: 0.94rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .node span {
+      font-size: 0.83rem;
+      color: var(--muted);
+      display: block;
+    }
+
+    /* Pipeline Timeline */
+    .pipeline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin: 1rem 0 1.25rem;
+    }
+
+    .step-box {
+      flex: 1 1 145px;
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem;
+      font-size: 0.84rem;
+    }
+
+    .step-box .step-tag {
+      color: var(--success);
+      font-weight: 700;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .step-box .step-title {
+      color: #f9fafb;
+      font-weight: 600;
+      margin-top: 0.2rem;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.75rem 0 1rem;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 0.7rem 0.8rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--surface-alt);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .pill-pass {
+      display: inline-block;
+      background: rgba(34, 197, 94, 0.16);
+      color: #86efac;
+      border: 1px solid rgba(34, 197, 94, 0.4);
+      padding: 0.12rem 0.5rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .callout {
+      background: rgba(56, 189, 248, 0.08);
+      border-left: 4px solid var(--accent);
+      padding: 0.85rem 1rem;
+      border-radius: 0 8px 8px 0;
+      margin: 0.9rem 0;
+      font-size: 0.92rem;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container">
+      <div class="hero-top">
+        <div>
+          <h1>Multi-Environment Configuration &amp; Secure Credential Management</h1>
+          <p class="subtitle">
+            Modular API Test Automation Framework built with Python, Pytest, HTTPX, Pydantic, Tenacity, Allure Reporting, and automated GitHub Actions CI/CD execution.
+          </p>
+        </div>
+        <div class="status-pill" title="Latest GitHub Actions Workflow Status">
+          <span class="status-dot"></span>
+          CI Pipeline Passing (Runs #26–#30)
+        </div>
+      </div>
+
+      <div class="badges">
+        <span class="badge">Repository: rames-qa / Multi-Environment-Configuration-Secure-Credential-Management</span>
+        <span class="badge">Python 3.12</span>
+        <span class="badge">Pytest + HTTPX</span>
+        <span class="badge">Pydantic Settings v2</span>
+        <span class="badge">Allure Reports</span>
+      </div>
+
+      <div class="repo-links">
+        <a class="btn btn-primary" href="https://github.com/rames-qa/Multi-Environment-Configuration-Secure-Credential-Management" target="_blank" rel="noopener noreferrer">
+          View GitHub Repository
+        </a>
+        <a class="btn btn-secondary" href="https://github.com/rames-qa/Multi-Environment-Configuration-Secure-Credential-Management/actions/workflows/api-tests.yml" target="_blank" rel="noopener noreferrer">
+          View GitHub Actions Runs
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <nav>
+    <div class="container nav-links">
+      <a href="#overview">1. Architecture</a>
+      <a href="#environments">2. Multi-Env Config</a>
+      <a href="#credentials">3. Credential Security</a>
+      <a href="#dependencies">4. Dependencies</a>
+      <a href="#client-auth">5. Client &amp; Auth</a>
+      <a href="#execution">6. Pytest &amp; Schemas</a>
+      <a href="#cicd">7. GitHub Actions</a>
+      <a href="#reporting">8. Allure Reports</a>
+      <a href="#troubleshooting">9. Troubleshooting</a>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <!-- 1. Project Overview & Framework Architecture -->
+    <section id="overview">
+      <h2><span class="sec-num">1</span> Project Overview &amp; Framework Architecture</h2>
+      <p>
+        The framework separates environment configuration, secret injection, HTTP transport, authentication lifecycle, domain API clients, schema validation, and reporting into independent layers so tests stay concise and maintainable across environments.
+      </p>
+
+      <div class="diagram-grid">
+        <div class="node">
+          <strong>Config Layer</strong>
+          <span><code>config/settings.py</code>, <code>dev.env</code>, <code>staging.env</code></span>
+        </div>
+        <div class="node">
+          <strong>Core Transport &amp; Auth</strong>
+          <span><code>core/http_client.py</code> &amp; <code>core/auth_manager.py</code></span>
+        </div>
+        <div class="node">
+          <strong>Domain Clients</strong>
+          <span><code>clients/user_client.py</code> reusable endpoint methods</span>
+        </div>
+        <div class="node">
+          <strong>Schema Models</strong>
+          <span><code>models/user_models.py</code> Pydantic contract validation</span>
+        </div>
+        <div class="node">
+          <strong>Test Suite &amp; CI/CD</strong>
+          <span><code>tests/</code>, Pytest fixtures, Allure &amp; GitHub Actions</span>
+        </div>
+      </div>
+
+      <pre><code>api-automation-framework/
+├── .github/workflows/
+│   └── api-tests.yml              # GitHub Actions CI/CD workflow
+├── config/
+│   ├── __init__.py
+│   ├── settings.py                # Pydantic BaseSettings loader
+│   ├── dev.env                    # Development environment defaults
+│   └── staging.env                # Staging environment configuration
+├── core/
+│   ├── __init__.py
+│   ├── auth_manager.py            # BearerTokenAuth (401 auto-refresh flow)
+│   └── http_client.py             # HTTPX wrapper with Tenacity retries &amp; Allure steps
+├── clients/
+│   ├── __init__.py
+│   └── user_client.py             # User endpoint wrapper (/users)
+├── models/
+│   ├── __init__.py
+│   └── user_models.py             # Pydantic UserResponse schema
+├── tests/
+│   ├── __init__.py
+│   ├── conftest.py                # Session fixtures (api_client, user_client)
+│   ├── test_health_and_users.py   # Environment &amp; smoke tests
+│   └── test_users.py              # Schema &amp; business rule assertions
+├── .gitignore                     # Excludes .venv, .env, allure-results
+├── index.html                     # Project documentation portal
+└── requirements.txt               # Pinned Python dependencies</code></pre>
+    </section>
+
+    <!-- 2. Multi-Environment Configuration -->
+    <section id="environments">
+      <h2><span class="sec-num">2</span> Multi-Environment Configuration (<code>dev</code>, <code>staging</code>)</h2>
+      <p>
+        Environment switching is controlled by the <code>TEST_ENV</code> variable (defaulting to <code>dev</code>). <code>pydantic-settings</code> dynamically loads <code>config/${TEST_ENV}.env</code> and overrides values with OS/CI environment variables when present.
+      </p>
+
+      <h3><code>config/staging.env</code></h3>
+      <pre><code>BASE_URL=https://jsonplaceholder.typicode.com
+AUTH_URL=https://jsonplaceholder.typicode.com/posts
+CLIENT_ID=demo-client
+CLIENT_SECRET=demo-secret
+TIMEOUT=10.0
+MAX_RETRIES=2</code></pre>
+
+      <h3><code>config/settings.py</code></h3>
+      <pre><code>import os
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Settings(BaseSettings):
+    env: str = os.getenv("TEST_ENV", "dev")
+    base_url: str
+    auth_url: str = ""
+    client_id: str = ""
+    client_secret: str = ""
+    timeout: float = 10.0
+    max_retries: int = 2
+
+    model_config = SettingsConfigDict(
+        env_file=(f"config/{os.getenv('TEST_ENV', 'dev')}.env", ".env"),
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
+
+
+settings = Settings()</code></pre>
+    </section>
+
+    <!-- 3. Secure Credential Management -->
+    <section id="credentials">
+      <h2><span class="sec-num">3</span> Secure Credential Management</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Execution Context</th>
+            <th>Where Secrets Live</th>
+            <th>Protection Mechanism</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Local Development (Eclipse / Git Bash)</strong></td>
+            <td>Root <code>.env</code> file or active shell session</td>
+            <td><code>.env</code> is listed in <code>.gitignore</code> so local credentials are never committed to Git.</td>
+          </tr>
+          <tr>
+            <td><strong>GitHub Actions CI/CD</strong></td>
+            <td>Repository Settings &rarr; Secrets and variables &rarr; Actions</td>
+            <td>Injected at runtime via <code>${{ secrets.CLIENT_ID }}</code> and <code>${{ secrets.CLIENT_SECRET }}</code> and masked in workflow logs.</td>
+          </tr>
+          <tr>
+            <td><strong>Configuration Precedence</strong></td>
+            <td>OS Environment &gt; <code>.env</code> &gt; <code>config/&lt;env&gt;.env</code></td>
+            <td>Real CI secrets automatically override placeholder values in tracked environment templates.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 4. Python Dependencies and Installation -->
+    <section id="dependencies">
+      <h2><span class="sec-num">4</span> Python Dependencies &amp; Installation</h2>
+      <h3><code>requirements.txt</code></h3>
+      <pre><code>pytest==8.3.3
+httpx==0.27.2
+pydantic==2.9.2
+pydantic-settings==2.6.0
+tenacity==9.0.0
+allure-pytest==2.13.5
+faker==30.8.1</code></pre>
+
+      <h3>Local Virtual Environment Setup (Windows Git Bash / Eclipse)</h3>
+      <pre><code>python -m venv .venv
+source .venv/Scripts/activate
+python -m pip install --upgrade pip
+python -m pip install --prefer-binary -r requirements.txt
+python -m pytest --version</code></pre>
+    </section>
+
+    <!-- 5. API Client and Authentication -->
+    <section id="client-auth">
+      <h2><span class="sec-num">5</span> API Client &amp; Token Refresh Authentication</h2>
+      <p>
+        <code>APIClient</code> centralizes base URL resolution, timeouts, exponential backoff retries via <code>tenacity</code>, structured logging, and Allure request/response attachments. <code>BearerTokenAuth</code> implements HTTPX's <code>auth_flow</code> generator to attach Bearer tokens and automatically refresh on <code>401 Unauthorized</code>.
+      </p>
+
+      <h3><code>core/auth_manager.py</code></h3>
+      <pre><code>from typing import Generator
+import httpx
+
+
+class BearerTokenAuth(httpx.Auth):
+    def __init__(self, auth_url: str, client_id: str, client_secret: str):
+        self.auth_url = auth_url
+        self.client_id = client_id
+        self.client_secret = client_secret
+        self._token: str | None = None
+
+    def _fetch_token(self) -> str:
+        response = httpx.post(
+            self.auth_url,
+            json={"client_id": self.client_id, "client_secret": self.client_secret},
+            timeout=10.0,
+        )
+        response.raise_for_status()
+        self._token = response.json()["access_token"]
+        return self._token
+
+    def auth_flow(self, request: httpx.Request) -> Generator[httpx.Request, httpx.Response, None]:
+        if not self._token:
+            self._fetch_token()
+
+        request.headers["Authorization"] = f"Bearer {self._token}"
+        response = yield request
+
+        if response.status_code == 401:
+            self._fetch_token()
+            request.headers["Authorization"] = f"Bearer {self._token}"
+            yield request</code></pre>
+
+      <h3><code>core/http_client.py</code></h3>
+      <pre><code>import json
+import logging
+import allure
+import httpx
+from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
+from config.settings import settings
+
+logger = logging.getLogger("api_framework")
+
+
+class APIClient:
+    def __init__(self, base_url: str = settings.base_url, headers: dict | None = None):
+        merged_headers = {"Accept": "application/json"}
+        if headers:
+            merged_headers.update(headers)
+        self.client = httpx.Client(
+            base_url=base_url,
+            timeout=settings.timeout,
+            headers=merged_headers,
+        )
+
+    @retry(
+        stop=stop_after_attempt(settings.max_retries),
+        wait=wait_exponential(multiplier=1, min=1, max=5),
+        retry=retry_if_exception_type((httpx.TransportError, httpx.TimeoutException)),
+        reraise=True,
+    )
+    def request(self, method: str, endpoint: str, **kwargs) -> httpx.Response:
+        with allure.step(f"{method.upper()} {endpoint}"):
+            logger.info("Request: %s %s", method.upper(), endpoint)
+            response = self.client.request(method, endpoint, **kwargs)
+
+            allure.attach(
+                json.dumps(dict(response.request.headers), indent=2),
+                name="Request Headers",
+                attachment_type=allure.attachment_type.JSON,
+            )
+            allure.attach(
+                response.text,
+                name=f"Response Body ({response.status_code})",
+                attachment_type=allure.attachment_type.JSON,
+            )
+            return response
+
+    def get(self, endpoint: str, **kwargs) -> httpx.Response:
+        return self.request("GET", endpoint, **kwargs)
+
+    def post(self, endpoint: str, **kwargs) -> httpx.Response:
+        return self.request("POST", endpoint, **kwargs)
+
+    def close(self):
+        self.client.close()</code></pre>
+    </section>
+
+    <!-- 6. Pytest Test Execution and Validation -->
+    <section id="execution">
+      <h2><span class="sec-num">6</span> Pytest Test Execution &amp; Schema Validation</h2>
+      <p>
+        Session-scoped fixtures in <code>tests/conftest.py</code> share a single HTTPX connection pool across tests. Responses are validated against Pydantic models in <code>models/user_models.py</code> before running business rule assertions.
+      </p>
+
+      <h3><code>models/user_models.py</code></h3>
+      <pre><code>from pydantic import BaseModel, EmailStr
+
+
+class UserResponse(BaseModel):
+    id: int
+    name: str
+    email: EmailStr
+    role: str | None = None</code></pre>
+
+      <h3><code>tests/test_users.py</code></h3>
+      <pre><code>import allure
+from models.user_models import UserResponse
+
+
+@allure.feature("User Management")
+@allure.story("Retrieve User Profile")
+def test_get_user_schema_and_business_rules(user_client):
+    response = user_client.get_user(user_id=1)
+
+    assert response.status_code == 200, f"Expected 200, got {response.status_code}"
+    user = UserResponse.model_validate(response.json())
+
+    assert user.id == 1
+    assert "@" in user.email</code></pre>
+
+      <h3>Local Execution Commands (Git Bash)</h3>
+      <pre><code>python -m pytest tests --collect-only -vv
+TEST_ENV=staging python -m pytest tests -vv -s --alluredir=allure-results</code></pre>
+    </section>
+
+    <!-- 7. GitHub Actions CI/CD Workflow -->
+    <section id="cicd">
+      <h2><span class="sec-num">7</span> GitHub Actions CI/CD Workflow</h2>
+      <p>
+        The workflow in <code>.github/workflows/api-tests.yml</code> runs automatically on every push or pull request to <code>main</code> and supports manual execution via <code>workflow_dispatch</code>.
+      </p>
+
+      <div class="pipeline">
+        <div class="step-box">
+          <div class="step-tag">Step 1</div>
+          <div class="step-title">Checkout Code</div>
+        </div>
+        <div class="step-box">
+          <div class="step-tag">Step 2</div>
+          <div class="step-title">Setup Python 3.12</div>
+        </div>
+        <div class="step-box">
+          <div class="step-tag">Step 3</div>
+          <div class="step-title">Install &amp; Verify Deps</div>
+        </div>
+        <div class="step-box">
+          <div class="step-tag">Step 4</div>
+          <div class="step-title">Pytest Collection</div>
+        </div>
+        <div class="step-box">
+          <div class="step-tag">Step 5</div>
+          <div class="step-title">Execute API Tests</div>
+        </div>
+        <div class="step-box">
+          <div class="step-tag">Step 6</div>
+          <div class="step-title">Upload Allure Results</div>
+        </div>
+      </div>
+
+      <h3>Recent Verified Workflow History</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Run</th>
+            <th>Trigger / Change</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>#30</strong></td>
+            <td>Manually triggered (<code>workflow_dispatch</code>)</td>
+            <td><span class="pill-pass">Successful</span></td>
+          </tr>
+          <tr>
+            <td><strong>#29</strong></td>
+            <td>Workflow configuration update</td>
+            <td><span class="pill-pass">Successful</span></td>
+          </tr>
+          <tr>
+            <td><strong>#28</strong></td>
+            <td>Settings refactoring</td>
+            <td><span class="pill-pass">Successful</span></td>
+          </tr>
+          <tr>
+            <td><strong>#27</strong></td>
+            <td>API client setup</td>
+            <td><span class="pill-pass">Successful</span></td>
+          </tr>
+          <tr>
+            <td><strong>#26</strong></td>
+            <td>Dependency updates</td>
+            <td><span class="pill-pass">Successful</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3><code>.github/workflows/api-tests.yml</code></h3>
+      <pre><code>name: API Test Automation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  api-tests:
+    name: Execute API Automation Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+
+      - name: Set Up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Verify Dependencies
+        run: |
+          python --version
+          python -m pytest --version
+          pip show allure-pytest
+
+      - name: Debug Test Collection
+        run: |
+          ls -la
+          ls -la tests/
+          python -m pytest tests --collect-only -vv
+
+      - name: Run API Tests
+        env:
+          TEST_ENV: staging
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+        run: |
+          python -m pytest tests -vv -s --alluredir=allure-results
+
+      - name: Upload Allure Results
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: allure-results
+          path: allure-results/
+          if-no-files-found: warn
+          retention-days: 14</code></pre>
+    </section>
+
+    <!-- 8. Allure Test Reports and Artifact Storage -->
+    <section id="reporting">
+      <h2><span class="sec-num">8</span> Allure Test Reports &amp; Artifact Storage</h2>
+      <p>
+        During execution, <code>allure-pytest</code> records feature/story metadata, HTTP step breakdowns, request headers, and response payloads into <code>allure-results/</code>.
+      </p>
+      <ul>
+        <li><strong>CI Artifact Retention:</strong> GitHub Actions uploads <code>allure-results/</code> with <code>if: always()</code> and a <code>14</code>-day retention policy so reports are preserved even if a test assertion fails.</li>
+        <li><strong>Local HTML Rendering:</strong> Download the <code>allure-results</code> zip from a completed workflow run (or use local results) and run:</li>
+      </ul>
+      <pre><code>allure serve allure-results</code></pre>
+    </section>
+
+    <!-- 9. Troubleshooting Common Pipeline Failures -->
+    <section id="troubleshooting">
+      <h2><span class="sec-num">9</span> Troubleshooting Common Pipeline Failures</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Symptom / Error</th>
+            <th>Root Cause</th>
+            <th>Resolution</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>Process completed with exit code 4</code></td>
+            <td>Pytest collected 0 tests or received an unrecognized CLI flag (e.g. missing <code>allure-pytest</code> or empty <code>tests/</code>).</td>
+            <td>Verify <code>tests/test_*.py</code> files exist and install <code>allure-pytest</code> in the active interpreter.</td>
+          </tr>
+          <tr>
+            <td><code>No files were found with the provided path: allure-results</code></td>
+            <td>Pytest aborted during collection/import before generating any test results.</td>
+            <td>Inspect the <code>Debug Test Collection</code> step logs for import or fixture errors.</td>
+          </tr>
+          <tr>
+            <td><code>Pydantic ValidationError</code> on <code>UserResponse</code></td>
+            <td>API payload omits optional fields like <code>role</code> or returns unexpected types.</td>
+            <td>Keep optional fields nullable (<code>role: str | None = None</code>) and align model fields with the target API contract.</td>
+          </tr>
+          <tr>
+            <td><code>git push</code> rejected (<code>fetch first</code>)</td>
+            <td>Remote <code>main</code> branch contains commits created directly on GitHub.</td>
+            <td>Run <code>git pull origin main --rebase</code> before <code>git push -u origin main</code>.</td>
+          </tr>
+          <tr>
+            <td>Windows Git Bash activation error</td>
+            <td>Using Linux path (<code>.venv/bin/activate</code>) or PowerShell script (<code>Activate.ps1</code>) inside MINGW64.</td>
+            <td>Use <code>source .venv/Scripts/activate</code> in Git Bash.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout">
+        <strong>GitHub Pages Hosting:</strong> Commit this <code>index.html</code> to the root of <code>main</code>, then open <strong>Settings &rarr; Pages</strong> in your repository and set Source to <strong>Deploy from a branch &rarr; main / (root)</strong> to publish this documentation live.
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container">
+      API Test Automation Framework Documentation &bull; Repository: <code>rames-qa/Multi-Environment-Configuration-Secure-Credential-Management</code>
+    </div>
+  </footer>
+
+</body>
+</html>
+Processed and analyzed in code
