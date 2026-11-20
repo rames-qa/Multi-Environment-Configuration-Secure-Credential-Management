@@ -36,7 +36,6 @@ jobs:
           python --version
           python -m pytest --version
           pip show allure-pytest
-          pip show python-dotenv
           pip show email-validator
 
       - name: Debug Test Collection
