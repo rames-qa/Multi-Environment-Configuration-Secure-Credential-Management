@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Test Automation Framework — Overview &amp; Setup</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-2: #0b1220;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-2: #22c55e;
+      --border: #334155;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+      color: #ffffff;
+      padding: 2.5rem 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .container {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 0 1.25rem;
+    }
+
+    header h1 {
+      margin: 0 0 0.5rem;
+      font-size: 1.85rem;
+    }
+
+    header p {
+      margin: 0 0 1rem;
+      opacity: 0.95;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(15, 23, 42, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      margin-right: 0.4rem;
+      margin-bottom: 0.4rem;
+    }
+
+    nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    nav .nav-inner {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      max-width: 1040px;
+      margin: 0 auto;
+    }
+
+    nav a {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.9rem;
+      padding: 0.35rem 0.7rem;
+      border-radius: 6px;
+      border: 1px solid transparent;
+    }
+
+    nav a:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    main {
+      padding: 2rem 0 3.5rem;
+    }
+
+    section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      margin-top: 0;
+      color: var(--accent);
+      font-size: 1.3rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    h3 {
+      margin-top: 1.25rem;
+      margin-bottom: 0.5rem;
+      font-size: 1.05rem;
+      color: #f8fafc;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: var(--surface-2);
+      padding: 0.15rem 0.35rem;
+      border-radius: 4px;
+      font-size: 0.9em;
+    }
+
+    pre {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      overflow-x: auto;
+      margin: 0.5rem 0 1rem;
+    }
+
+    pre code {
+      background: transparent;
+      padding: 0;
+      font-size: 0.86rem;
+      color: #e2e8f0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.75rem;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 0.65rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      font-size: 0.92rem;
+    }
+
+    th {
+      color: var(--accent);
+      background: rgba(15, 23, 42, 0.45);
+    }
+
+    a.repo-link {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+
+    .ok {
+      color: var(--accent-2);
+      font-weight: 600;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      padding-bottom: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>Modular API Test Automation Framework</h1>
+      <p>
+        Python, Pytest, HTTPX, Pydantic, Tenacity, Allure &amp; GitHub Actions CI/CD
+       [cite: 4, 5, 7, 10, 11]
+      </p>
+      <div>
+        <span class="badge">Repo: rames-qa/Multi-Environment-Configuration-Secure-Credential-Management</span>
+        <span class="badge">Branch: main</span>
+        <span class="badge">Runner: Git Bash + Eclipse IDE</span>
+      </div>
+      <p style="margin-top: 0.75rem;">
+        GitHub Repository:
+        <a class="repo-link" href="https://github.com/rames-qa/Multi-Environment-Configuration-Secure-Credential-Management" target="_blank" rel="noopener noreferrer">
+          https://github.com/rames-qa/Multi-Environment-Configuration-Secure-Credential-Management
+        </a>
+      </p>
+    </div>
+  </header>
+
+  <nav>
+    <div class="nav-inner">
+      <a href="#modules">Framework Modules</a>
+      <a href="#commands">Git Bash &amp; Pytest Commands</a>
+      <a href="#workflow">GitHub Actions Workflow</a>
+      <a href="#fixes">Key Alignment Fixes</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <section id="modules">
+      <h2>1. Framework Modules &amp; Responsibilities</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>File</th>
+            <th>Role</th>
+            <th>Key Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>config/settings.py</code></td>
+            <td>Settings &amp; Credentials</td>
+            <td>Loads <code>TEST_ENV</code> (default <code>dev</code>), <code>base_url</code>, <code>auth_url</code>, <code>client_id</code>, <code>client_secret</code>, <code>timeout</code>, and <code>max_retries</code> via <code>pydantic-settings</code>[cite: 7].</td>
+          </tr>
+          <tr>
+            <td><code>config/staging.env</code></td>
+            <td>Staging Environment</td>
+            <td>Defines <code>BASE_URL=https://jsonplaceholder.typicode.com</code>, <code>AUTH_URL</code>, client credentials, <code>TIMEOUT=10.0</code>, and <code>MAX_RETRIES=2</code>[cite: 8].</td>
+          </tr>
+          <tr>
+            <td><code>core/auth_manager.py</code></td>
+            <td>Bearer Token Auth</td>
+            <td><code>BearerTokenAuth</code> subclasses <code>httpx.Auth</code>, fetches token via POST, attaches <code>Bearer</code> header, and refreshes once on <code>401</code>[cite: 9, 11].</td>
+          </tr>
+          <tr>
+            <td><code>core/http_client.py</code></td>
+            <td>HTTPX Request Wrapper</td>
+            <td><code>APIClient</code> wraps <code>httpx.Client</code> with <code>tenacity</code> retries on transport/timeout errors, logging, and Allure request/response attachments[cite: 10, 12].</td>
+          </tr>
+          <tr>
+            <td><code>clients/user_client.py</code></td>
+            <td>Domain API Client</td>
+            <td><code>UserClient</code> exposes <code>get_user(user_id)</code> and <code>create_user(payload)</code> over <code>APIClient</code>[cite: 6].</td>
+          </tr>
+          <tr>
+            <td><code>models/user_models.py</code></td>
+            <td>Schema Validation</td>
+            <td><code>UserResponse</code> validates <code>id</code>, <code>name</code>, <code>email</code> (<code>EmailStr</code>), and optional <code>role</code>[cite: 3, 13].</td>
+          </tr>
+          <tr>
+            <td><code>tests/conftest.py</code></td>
+            <td>Pytest Fixtures</td>
+            <td>Provides session-scoped <code>api_client</code> (and <code>user_client</code>) configured from <code>settings</code>[cite: 1, 3].</td>
+          </tr>
+          <tr>
+            <td><code>tests/test_health_and_users.py</code> &amp; <code>tests/test_users.py</code></td>
+            <td>Test Suites</td>
+            <td>Validates environment values, endpoints (<code>/posts/1</code>, <code>/users/1</code>), status codes, Pydantic schemas, and assertions[cite: 2, 3].</td>
+          </tr>
+          <tr>
+            <td><code>requirements.txt</code></td>
+            <td>Dependencies</td>
+            <td><code>pytest</code>, <code>httpx</code>, <code>pydantic</code>, <code>pydantic-settings</code>, <code>tenacity</code>, <code>allure-pytest</code>, and <code>faker</code>[cite: 4].</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="commands">
+      <h2>2. Git Bash &amp; Pytest Execution Commands</h2>
+      <p>Run in <strong>Git Bash</strong> inside your project directory with <code>.venv</code> activated:</p>
+      <pre><code>python -m pip install -r requirements.txt
+python -m pytest --version
+python -m pytest tests --collect-only -vv
+TEST_ENV=staging python -m pytest tests -vv -s --alluredir=allure-results</code></pre>
+      <p>Sync changes to <code>main</code>:</p>
+      <pre><code>git remote add origin https://github.com/rames-qa/Multi-Environment-Configuration-Secure-Credential-Management.git
+git pull origin main --rebase
+git add .
+git commit -m "Update API automation framework and workflow"
+git push -u origin main</code></pre>
+    </section>
+
+    <section id="workflow">
+      <h2>3. GitHub Actions Workflow (<code>.github/workflows/api-tests.yml</code>)</h2>
+      <pre><code>name: API Test Automation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  api-tests:
+    name: Execute API Automation Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+
+      - name: Set Up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Verify Dependencies
+        run: |
+          python --version
+          python -m pytest --version
+          pip show allure-pytest
+
+      - name: Debug Test Collection
+        run: |
+          ls -la
+          ls -la tests/
+          python -m pytest tests --collect-only -vv
+
+      - name: Run API Tests
+        env:
+          TEST_ENV: staging
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+        run: |
+          python -m pytest tests -vv -s --alluredir=allure-results
+
+      - name: Upload Allure Results
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: allure-results
+          path: allure-results/
+          if-no-files-found: warn
+          retention-days: 14</code></pre>
+    </section>
+
+    <section id="fixes">
+      <h2>4. Key Alignment Fixes</h2>
+      <ul>
+        <li><strong>Workflow YAML indentation:</strong> Each <code>- name:</code> under <code>steps:</code> must be indented by 2 spaces so GitHub Actions parses the workflow without syntax errors[cite: 5].</li>
+        <li><strong><code>APIClient</code> methods &amp; auth:</strong> Ensure <code>APIClient</code> supports <code>post()</code> (used by <code>UserClient.create_user</code>) and optional <code>auth</code> (for <code>BearerTokenAuth</code>)[cite: 6, 11, 12].</li>
+        <li><strong><code>user_client</code> fixture:</strong> Define <code>user_client</code> in <code>tests/conftest.py</code> so <code>test_users.py</code> resolves its fixture cleanly[cite: 1, 3].</li>
+        <li><strong>Schema vs. API response:</strong> Make <code>role</code> optional (<code>str | None = None</code>) or match your target API's payload so Pydantic validation does not fail unexpectedly[cite: 3, 13].</li>
+      </ul>
+      <p class="ok">Tip: If you want this served as a static page, you can commit <code>index.html</code> to your repository and enable GitHub Pages in repository settings.</p>
+    </section>
+  </main>
+
+  <footer>
+    API Test Automation Framework Reference Page &bull; <code>rames-qa</code>
+  </footer>
+</body>
+</html>
