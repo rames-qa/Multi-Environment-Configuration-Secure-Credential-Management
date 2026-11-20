@@ -1,5 +1,6 @@
 # tests/conftest.py
 import pytest
+from clients.user_client import UserClient
 from config.settings import settings
 from core.http_client import APIClient
 
@@ -11,3 +12,7 @@ def api_client():
     client = APIClient(base_url=settings.base_url, headers=headers)
     yield client
     client.close()
+
+@pytest.fixture(scope="session")
+def user_client(api_client) -> UserClient:
+    return UserClient(api_client)
