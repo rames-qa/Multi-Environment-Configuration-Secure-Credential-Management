@@ -8,12 +8,14 @@ from config.settings import settings
 logger = logging.getLogger("api_framework")
 
 class APIClient:
-    def __init__(self, base_url: str = settings.base_url, auth: httpx.Auth | None = None):
+    def __init__(self, base_url: str = settings.base_url, headers: dict | None = None):
+        merged_headers = {"Accept": "application/json"}
+        if headers:
+            merged_headers.update(headers)
         self.client = httpx.Client(
             base_url=base_url,
-            auth=auth,
             timeout=settings.timeout,
-            headers={"Accept": "application/json"}
+            headers=merged_headers
         )
 
     @retry(
@@ -24,11 +26,9 @@ class APIClient:
     )
     def request(self, method: str, endpoint: str, **kwargs) -> httpx.Response:
         with allure.step(f"{method.upper()} {endpoint}"):
-            logger.info(f"Request: {method.upper()} {endpoint} | Kwargs: {kwargs}")
-            
+            logger.info("Request: %s %s", method.upper(), endpoint)
             response = self.client.request(method, endpoint, **kwargs)
-            
-            # Attach details to Allure Report
+
             allure.attach(
                 json.dumps(dict(response.request.headers), indent=2),
                 name="Request Headers",
@@ -39,14 +39,10 @@ class APIClient:
                 name=f"Response Body ({response.status_code})",
                 attachment_type=allure.attachment_type.JSON
             )
-            logger.info(f"Response: {response.status_code} | Time: {response.elapsed.total_seconds()}s")
             return response
 
     def get(self, endpoint: str, **kwargs) -> httpx.Response:
         return self.request("GET", endpoint, **kwargs)
-
-    def post(self, endpoint: str, **kwargs) -> httpx.Response:
-        return self.request("POST", endpoint, **kwargs)
 
     def close(self):
         self.client.close()
