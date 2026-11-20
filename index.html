@@ -1,15 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API Test Automation Framework — Execution Workflow &amp; CI/CD</title>
+  <title>Project Overview — API Test Automation Framework</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
           fontFamily: {
@@ -17,7 +18,6 @@
             mono: ['JetBrains Mono', 'monospace'],
           },
           colors: {
-            diagramBg: '#edf2f7',
             cyanBand: '#27a6cf',
             navyCard: '#063c73',
             navyHover: '#085099',
@@ -29,17 +29,17 @@
     };
   </script>
   <style>
-    /* Structural directional connectors matching layered framework diagram */
+    /* Structural directional connectors for the layered framework diagram */
     .v-connector {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 32px;
+      height: 30px;
     }
     .v-connector .shaft {
       width: 4px;
-      height: 20px;
+      height: 18px;
       background-color: #0a4980;
     }
     .v-connector .tip {
@@ -55,7 +55,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 32px;
+      height: 30px;
     }
     .up-connector .tip {
       width: 0;
@@ -66,7 +66,7 @@
     }
     .up-connector .shaft {
       width: 4px;
-      height: 20px;
+      height: 18px;
       background-color: #0a4980;
     }
 
@@ -77,7 +77,7 @@
     }
     .h-connector .shaft {
       height: 4px;
-      width: 20px;
+      width: 18px;
       background-color: #0a4980;
     }
     .h-connector .tip {
@@ -88,10 +88,9 @@
       border-left: 9px solid #0a4980;
     }
 
-    /* Four-column fan-out bus below Test Scripts Execution */
     .fanout-bus {
       position: relative;
-      height: 36px;
+      height: 34px;
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
     }
@@ -101,14 +100,14 @@
       top: 0;
       left: 50%;
       width: 4px;
-      height: 14px;
+      height: 13px;
       background-color: #0a4980;
       transform: translateX(-50%);
     }
     .fanout-bus::after {
       content: "";
       position: absolute;
-      top: 14px;
+      top: 13px;
       left: 12.5%;
       right: 12.5%;
       height: 4px;
@@ -116,22 +115,22 @@
     }
     .fanout-drop {
       position: relative;
-      height: 36px;
+      height: 34px;
     }
     .fanout-drop::before {
       content: "";
       position: absolute;
-      top: 14px;
+      top: 13px;
       left: 50%;
       width: 4px;
-      height: 13px;
+      height: 12px;
       background-color: #0a4980;
       transform: translateX(-50%);
     }
     .fanout-drop::after {
       content: "";
       position: absolute;
-      top: 26px;
+      top: 24px;
       left: 50%;
       transform: translateX(-50%);
       border-left: 6px solid transparent;
@@ -142,10 +141,10 @@
     .diag-node {
       background-color: #063c73;
       color: #ffffff;
-      border-radius: 6px;
+      border-radius: 8px;
       font-weight: 600;
       transition: transform 0.14s ease, background-color 0.14s ease, box-shadow 0.14s ease;
-      box-shadow: 0 2px 6px rgba(5, 55, 105, 0.2);
+      box-shadow: 0 2px 6px rgba(5, 55, 105, 0.22);
     }
     .diag-node:hover {
       background-color: #085099;
@@ -153,616 +152,272 @@
     }
     .diag-node.active-node {
       background-color: #0959a8;
-      box-shadow: 0 0 0 3px #facc15, 0 6px 14px rgba(5, 55, 105, 0.28);
+      box-shadow: 0 0 0 3px #facc15, 0 6px 14px rgba(5, 55, 105, 0.3);
     }
 
-    .workflow-step-card {
-      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    /* Custom scrollbar for sidebar and code blocks */
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
     }
-    .workflow-step-card:hover {
-      transform: translateY(-2px);
+    ::-webkit-scrollbar-track {
+      background: transparent;
     }
-    .workflow-step-card.active-step {
-      border-color: #27a6cf;
-      box-shadow: 0 0 0 3px rgba(39, 166, 207, 0.3), 0 8px 18px rgba(5, 55, 105, 0.14);
+    ::-webkit-scrollbar-thumb {
+      background: rgba(100, 116, 139, 0.45);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(100, 116, 139, 0.7);
     }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-900 font-sans antialiased selection:bg-sky-500 selection:text-white">
+<body class="bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100 font-sans antialiased transition-colors duration-200 overflow-x-hidden">
 
-  <!-- Toast Banner for Copy Actions -->
-  <div id="copy-toast" role="status" aria-live="polite"
-       class="fixed bottom-5 right-5 z-50 hidden items-center gap-2.5 rounded-xl bg-slate-900 text-white px-4 py-3 text-sm font-medium shadow-xl border border-slate-700">
+  <!-- Toast Notification -->
+  <div id="toast" role="status" aria-live="polite"
+       class="fixed bottom-5 right-5 z-50 hidden items-center gap-2.5 rounded-xl bg-slate-900 dark:bg-slate-800 text-white px-4 py-3 text-sm font-medium shadow-2xl border border-slate-700">
     <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
     </svg>
-    <span id="copy-toast-text">Copied to clipboard</span>
+    <span id="toast-text">Copied to clipboard</span>
   </div>
 
-  <!-- Top Repository & CI Status Bar -->
-  <header class="bg-navyBar text-white border-b border-sky-900/60 shadow-md">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-      <div class="min-w-0">
-        <div class="flex flex-wrap items-center gap-2.5">
-          <h1 class="text-lg sm:text-xl font-bold tracking-tight">
-            API Test Automation Framework — Execution Workflow &amp; CI/CD
-          </h1>
-          <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/20 border border-emerald-400/40 px-3 py-0.5 text-xs font-semibold text-emerald-200">
-            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-            CI Runs #26–#30 Successful
-          </span>
-        </div>
-        <p class="text-xs sm:text-sm text-sky-200 mt-1 truncate">
-          Repository: <span class="font-mono font-semibold text-white">Multi-Environment-Configuration-Secure-Credential-Management</span>
-        </p>
-      </div>
+  <!-- Mobile Sidebar Backdrop -->
+  <div id="sidebar-backdrop" class="fixed inset-0 z-30 bg-slate-950/60 backdrop-blur-xs hidden lg:hidden" aria-hidden="true"></div>
 
-      <div class="flex flex-wrap items-center gap-2 shrink-0">
-        <a href="https://github.com/rames-qa/Multi-Environment-Configuration-Secure-Credential-Management"
-           target="_blank" rel="noopener noreferrer"
-           class="inline-flex items-center gap-1.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/25 px-3.5 py-2 text-xs sm:text-sm font-semibold text-white transition">
-          GitHub Repository
-        </a>
-        <a href="https://github.com/rames-qa/Multi-Environment-Configuration-Secure-Credential-Management/actions/workflows/api-tests.yml"
-           target="_blank" rel="noopener noreferrer"
-           class="inline-flex items-center gap-1.5 rounded-lg bg-cyanBand hover:bg-sky-500 px-3.5 py-2 text-xs sm:text-sm font-semibold text-white shadow transition">
-          Actions Workflow (#30)
-        </a>
-      </div>
-    </div>
-  </header>
-
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
-
-    <!-- 8-Step Execution Workflow Pipeline -->
-    <section aria-label="End-to-End Execution Workflow Steps"
-             class="bg-white rounded-2xl border-2 border-sky-200 p-4 sm:p-6 shadow-md">
-      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 mb-5">
-        <div>
-          <span class="text-xs font-bold uppercase tracking-wider text-cyanBand">End-to-End Execution Workflow</span>
-          <h2 class="text-lg sm:text-xl font-bold text-navyBar mt-0.5">
-            8-Stage Automated API Execution &amp; Publishing Flow
-          </h2>
-          <p class="text-xs sm:text-sm text-slate-600 mt-0.5">
-            Select any execution step (1–8) to inspect its implementation, commands, and linked diagram module.
-          </p>
-        </div>
-
-        <div class="flex flex-wrap items-center gap-2">
-          <button id="prev-step-btn" type="button"
-                  class="rounded-lg border border-slate-300 bg-slate-100 hover:bg-slate-200 text-slate-800 px-3 py-2 text-xs font-semibold transition cursor-pointer">
-            &larr; Previous Step
-          </button>
-          <button id="next-step-btn" type="button"
-                  class="rounded-lg bg-navyBar hover:bg-navyHover text-white px-3.5 py-2 text-xs font-semibold transition cursor-pointer">
-            Next Step &rarr;
-          </button>
-        </div>
-      </div>
-
-      <!-- 8 Step Cards Grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5" id="workflow-steps-grid">
-        <!-- Step 1 -->
-        <button type="button" data-step="step_1"
-                class="workflow-step-card active-step text-left rounded-xl border border-slate-200 bg-slate-50 p-4 cursor-pointer">
-          <div class="flex items-center justify-between gap-2 mb-2">
-            <span class="inline-flex items-center justify-center rounded-md bg-navyBar text-white font-mono text-xs font-bold px-2.5 py-1">
-              STEP 01
-            </span>
-            <span class="text-[11px] font-mono font-semibold text-sky-800 bg-sky-100 px-2 py-0.5 rounded">
-              api-tests.yml
-            </span>
-          </div>
-          <div class="font-bold text-sm text-navyBar">GitHub Actions Trigger</div>
-          <p class="text-xs text-slate-600 mt-1">
-            Triggered on <code>push</code>, <code>pull_request</code> to <code>main</code>, or manual <code>workflow_dispatch</code>.
-          </p>
-        </button>
-
-        <!-- Step 2 -->
-        <button type="button" data-step="step_2"
-                class="workflow-step-card text-left rounded-xl border border-slate-200 bg-slate-50 p-4 cursor-pointer">
-          <div class="flex items-center justify-between gap-2 mb-2">
-            <span class="inline-flex items-center justify-center rounded-md bg-navyBar text-white font-mono text-xs font-bold px-2.5 py-1">
-              STEP 02
-            </span>
-            <span class="text-[11px] font-mono font-semibold text-sky-800 bg-sky-100 px-2 py-0.5 rounded">
-              settings.py
-            </span>
-          </div>
-          <div class="font-bold text-sm text-navyBar">Load Environment Configuration</div>
-          <p class="text-xs text-slate-600 mt-1">
-            Resolves <code>TEST_ENV</code> (<code>staging</code> / <code>dev</code>), <code>BASE_URL</code>, <code>TIMEOUT</code>, and <code>MAX_RETRIES</code>.
-          </p>
-        </button>
-
-        <!-- Step 3 -->
-        <button type="button" data-step="step_3"
-                class="workflow-step-card text-left rounded-xl border border-slate-200 bg-slate-50 p-4 cursor-pointer">
-          <div class="flex items-center justify-between gap-2 mb-2">
-            <span class="inline-flex items-center justify-center rounded-md bg-navyBar text-white font-mono text-xs font-bold px-2.5 py-1">
-              STEP 03
-            </span>
-            <span class="text-[11px] font-mono font-semibold text-sky-800 bg-sky-100 px-2 py-0.5 rounded">
-              auth_manager.py
-            </span>
-          </div>
-          <div class="font-bold text-sm text-navyBar">Load Secure Credentials</div>
-          <p class="text-xs text-slate-600 mt-1">
-            Injects <code>CLIENT_ID</code> &amp; <code>CLIENT_SECRET</code> via GitHub Secrets and refreshes bearer tokens on <code>401</code>.
-          </p>
-        </button>
-
-        <!-- Step 4 -->
-        <button type="button" data-step="step_4"
-                class="workflow-step-card text-left rounded-xl border border-slate-200 bg-slate-50 p-4 cursor-pointer">
-          <div class="flex items-center justify-between gap-2 mb-2">
-            <span class="inline-flex items-center justify-center rounded-md bg-navyBar text-white font-mono text-xs font-bold px-2.5 py-1">
-              STEP 04
-            </span>
-            <span class="text-[11px] font-mono font-semibold text-sky-800 bg-sky-100 px-2 py-0.5 rounded">
-              http_client.py
-            </span>
-          </div>
-          <div class="font-bold text-sm text-navyBar">Initialize HTTPX Client</div>
-          <p class="text-xs text-slate-600 mt-1">
-            Builds session <code>APIClient</code> &amp; <code>UserClient</code> fixtures with <code>tenacity</code> retries and JSON headers.
-          </p>
-        </button>
-
-        <!-- Step 5 -->
-        <button type="button" data-step="step_5"
-                class="workflow-step-card text-left rounded-xl border border-slate-200 bg-slate-50 p-4 cursor-pointer">
-          <div class="flex items-center justify-between gap-2 mb-2">
-            <span class="inline-flex items-center justify-center rounded-md bg-navyBar text-white font-mono text-xs font-bold px-2.5 py-1">
-              STEP 05
-            </span>
-            <span class="text-[11px] font-mono font-semibold text-sky-800 bg-sky-100 px-2 py-0.5 rounded">
-              pytest tests/
-            </span>
-          </div>
-          <div class="font-bold text-sm text-navyBar">Execute Pytest Test Cases</div>
-          <p class="text-xs text-slate-600 mt-1">
-            Collects tests with <code>--collect-only -vv</code> and executes suites on Python 3.12 with <code>--alluredir</code>.
-          </p>
-        </button>
-
-        <!-- Step 6 -->
-        <button type="button" data-step="step_6"
-                class="workflow-step-card text-left rounded-xl border border-slate-200 bg-slate-50 p-4 cursor-pointer">
-          <div class="flex items-center justify-between gap-2 mb-2">
-            <span class="inline-flex items-center justify-center rounded-md bg-navyBar text-white font-mono text-xs font-bold px-2.5 py-1">
-              STEP 06
-            </span>
-            <span class="text-[11px] font-mono font-semibold text-sky-800 bg-sky-100 px-2 py-0.5 rounded">
-              user_models.py
-            </span>
-          </div>
-          <div class="font-bold text-sm text-navyBar">Validate API Responses</div>
-          <p class="text-xs text-slate-600 mt-1">
-            Asserts HTTP status codes, runs <code>UserResponse.model_validate()</code> schema checks, and verifies rules.
-          </p>
-        </button>
-
-        <!-- Step 7 -->
-        <button type="button" data-step="step_7"
-                class="workflow-step-card text-left rounded-xl border border-slate-200 bg-slate-50 p-4 cursor-pointer">
-          <div class="flex items-center justify-between gap-2 mb-2">
-            <span class="inline-flex items-center justify-center rounded-md bg-navyBar text-white font-mono text-xs font-bold px-2.5 py-1">
-              STEP 07
-            </span>
-            <span class="text-[11px] font-mono font-semibold text-sky-800 bg-sky-100 px-2 py-0.5 rounded">
-              allure-results/
-            </span>
-          </div>
-          <div class="font-bold text-sm text-navyBar">Generate Allure Reports</div>
-          <p class="text-xs text-slate-600 mt-1">
-            Captures <code>allure.step</code> traces, request headers, and response payloads into <code>allure-results/</code>.
-          </p>
-        </button>
-
-        <!-- Step 8 -->
-        <button type="button" data-step="step_8"
-                class="workflow-step-card text-left rounded-xl border border-slate-200 bg-slate-50 p-4 cursor-pointer">
-          <div class="flex items-center justify-between gap-2 mb-2">
-            <span class="inline-flex items-center justify-center rounded-md bg-cyanBand text-white font-mono text-xs font-bold px-2.5 py-1">
-              STEP 08
-            </span>
-            <span class="text-[11px] font-mono font-semibold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">
-              upload-artifact@v5
-            </span>
-          </div>
-          <div class="font-bold text-sm text-navyBar">Publish CI Results</div>
-          <p class="text-xs text-slate-600 mt-1">
-            Uploads <code>allure-results/</code> artifact (14-day retention) and summarizes pass/fail counts, duration &amp; env.
-          </p>
-        </button>
-      </div>
-    </section>
-
-    <!-- Step 8 Dedicated Panel: Publish CI Results Summary & Six Required Metrics -->
-    <section id="publish-ci-results" aria-label="Publish CI Results Summary"
-             class="bg-white rounded-2xl border-2 border-navyBar/25 p-5 sm:p-6 shadow-md">
-      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 pb-4 border-b border-slate-200">
-        <div>
-          <div class="flex flex-wrap items-center gap-2">
-            <span class="rounded-md bg-cyanBand text-white font-mono text-xs font-bold px-2.5 py-1">
-              STAGE 08 OUTPUT
-            </span>
-            <h2 class="text-lg sm:text-xl font-bold text-navyBar">
-              Publish CI Results — Execution Summary
-            </h2>
-          </div>
-          <p class="text-xs sm:text-sm text-slate-600 mt-1">
-            Switch between recent passing GitHub Actions runs (#30–#26) or edit values below to preview CI execution metrics.
-          </p>
-        </div>
-
-        <!-- Run Preset Selector -->
-        <div class="flex flex-wrap items-center gap-1.5" role="group" aria-label="Select CI Run Preset">
-          <button type="button" data-preset="run30"
-                  class="preset-btn rounded-lg bg-navyBar text-white px-3 py-1.5 text-xs font-semibold cursor-pointer">
-            Run #30 (staging)
-          </button>
-          <button type="button" data-preset="run29"
-                  class="preset-btn rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 px-3 py-1.5 text-xs font-semibold cursor-pointer">
-            Run #29 (staging)
-          </button>
-          <button type="button" data-preset="run28"
-                  class="preset-btn rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 px-3 py-1.5 text-xs font-semibold cursor-pointer">
-            Run #28 (dev)
-          </button>
-          <button type="button" data-preset="run27"
-                  class="preset-btn rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 px-3 py-1.5 text-xs font-semibold cursor-pointer">
-            Run #27 (staging)
-          </button>
-          <button type="button" data-preset="run26"
-                  class="preset-btn rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 px-3 py-1.5 text-xs font-semibold cursor-pointer">
-            Run #26 (staging)
-          </button>
-        </div>
-      </div>
-
-      <!-- Six Required CI Result Metric Cards -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3.5 mt-5">
-        <div class="rounded-xl bg-navyBar text-white p-4 shadow-sm">
-          <div class="text-[11px] font-bold uppercase tracking-wider text-sky-200">Total Test Cases</div>
-          <div id="metric-total" class="text-2xl sm:text-3xl font-extrabold font-mono mt-1">2</div>
-          <div class="text-xs text-sky-200 mt-1">Collected by Pytest</div>
-        </div>
-
-        <div class="rounded-xl bg-emerald-950 text-white p-4 border border-emerald-700/60 shadow-sm">
-          <div class="text-[11px] font-bold uppercase tracking-wider text-emerald-300">Passed Tests</div>
-          <div id="metric-passed" class="text-2xl sm:text-3xl font-extrabold font-mono text-emerald-400 mt-1">2</div>
-          <div id="metric-pass-rate" class="text-xs text-emerald-200 mt-1">100.0% pass rate</div>
-        </div>
-
-        <div class="rounded-xl bg-slate-900 text-white p-4 border border-slate-700 shadow-sm">
-          <div class="text-[11px] font-bold uppercase tracking-wider text-rose-300">Failed Tests</div>
-          <div id="metric-failed" class="text-2xl sm:text-3xl font-extrabold font-mono text-rose-400 mt-1">0</div>
-          <div class="text-xs text-slate-300 mt-1">Assertions &amp; schemas</div>
-        </div>
-
-        <div class="rounded-xl bg-slate-900 text-white p-4 border border-slate-700 shadow-sm">
-          <div class="text-[11px] font-bold uppercase tracking-wider text-amber-300">Skipped Tests</div>
-          <div id="metric-skipped" class="text-2xl sm:text-3xl font-extrabold font-mono text-amber-300 mt-1">0</div>
-          <div class="text-xs text-slate-300 mt-1">Filtered / skipped</div>
-        </div>
-
-        <div class="rounded-xl bg-slate-900 text-white p-4 border border-slate-700 shadow-sm">
-          <div class="text-[11px] font-bold uppercase tracking-wider text-cyan-300">Execution Duration</div>
-          <div id="metric-duration" class="text-2xl sm:text-3xl font-extrabold font-mono text-cyan-300 mt-1">1.84s</div>
-          <div class="text-xs text-slate-300 mt-1">Pytest suite runtime</div>
-        </div>
-
-        <div class="rounded-xl bg-cyanBand text-white p-4 shadow-sm">
-          <div class="text-[11px] font-bold uppercase tracking-wider text-sky-950">Environment Tested</div>
-          <div id="metric-env" class="text-2xl sm:text-3xl font-extrabold font-mono text-white mt-1 uppercase">staging</div>
-          <div id="metric-run-label" class="text-xs font-medium text-sky-950 mt-1">Workflow Run #30</div>
-        </div>
-      </div>
-
-      <!-- Interactive CI Summary Editor Controls -->
-      <div class="mt-5 pt-4 border-t border-slate-200 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        <div>
-          <label for="input-total" class="block text-xs font-semibold text-slate-700 mb-1">Total test cases</label>
-          <input id="input-total" type="number" min="0" value="2"
-                 class="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-mono text-slate-900 focus:border-cyanBand focus:outline-none" />
-        </div>
-        <div>
-          <label for="input-passed" class="block text-xs font-semibold text-slate-700 mb-1">Passed tests</label>
-          <input id="input-passed" type="number" min="0" value="2"
-                 class="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-mono text-slate-900 focus:border-cyanBand focus:outline-none" />
-        </div>
-        <div>
-          <label for="input-failed" class="block text-xs font-semibold text-slate-700 mb-1">Failed tests</label>
-          <input id="input-failed" type="number" min="0" value="0"
-                 class="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-mono text-slate-900 focus:border-cyanBand focus:outline-none" />
-        </div>
-        <div>
-          <label for="input-skipped" class="block text-xs font-semibold text-slate-700 mb-1">Skipped tests</label>
-          <input id="input-skipped" type="number" min="0" value="0"
-                 class="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-mono text-slate-900 focus:border-cyanBand focus:outline-none" />
-        </div>
-        <div>
-          <label for="input-duration" class="block text-xs font-semibold text-slate-700 mb-1">Execution duration</label>
-          <input id="input-duration" type="text" value="1.84s"
-                 class="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-mono text-slate-900 focus:border-cyanBand focus:outline-none" />
-        </div>
-        <div>
-          <label for="input-env" class="block text-xs font-semibold text-slate-700 mb-1">Environment tested</label>
-          <select id="input-env"
-                  class="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-mono text-slate-900 bg-white focus:border-cyanBand focus:outline-none">
-            <option value="staging" selected>staging</option>
-            <option value="dev">dev</option>
-          </select>
-        </div>
-      </div>
-    </section>
-
-    <!-- Layered Cyan-and-Navy Architecture Diagram Board -->
-    <section aria-label="Layered Framework Architecture Diagram"
-             class="bg-white rounded-2xl border-2 border-sky-200 p-4 sm:p-6 shadow-md">
-      <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-        <div>
-          <h2 class="text-base sm:text-lg font-bold text-navyBar">Layered Framework Architecture Diagram</h2>
-          <p class="text-xs sm:text-sm text-slate-600">
-            Click any module block to view its repository implementation and corresponding workflow stage.
-          </p>
-        </div>
-        <span class="text-xs font-mono bg-sky-50 text-sky-800 border border-sky-200 px-3 py-1 rounded-full font-semibold">
-          Pytest &bull; HTTPX &bull; Pydantic &bull; Tenacity &bull; Allure
-        </span>
-      </div>
-
-      <!-- 1. Top Cyan Band -->
-      <div class="bg-cyanBand rounded-lg p-2.5 sm:p-3">
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
-          <button type="button" data-node="functional"
-                  class="diag-node min-h-[66px] px-2 py-2.5 text-xs sm:text-sm leading-snug flex items-center justify-center text-center cursor-pointer">
-            Functional<br />Testing
-          </button>
-          <button type="button" data-node="api_testing"
-                  class="diag-node active-node min-h-[66px] px-2 py-2.5 text-xs sm:text-sm leading-snug flex items-center justify-center text-center cursor-pointer">
-            Webservices /<br />API Testing
-          </button>
-          <button type="button" data-node="smoke_suite"
-                  class="diag-node min-h-[66px] px-2 py-2.5 text-xs sm:text-sm leading-snug flex items-center justify-center text-center cursor-pointer">
-            Health &amp; Smoke<br />Suite
-          </button>
-          <button type="button" data-node="schema_validation"
-                  class="diag-node min-h-[66px] px-2 py-2.5 text-xs sm:text-sm leading-snug flex items-center justify-center text-center cursor-pointer">
-            Schema &amp; Contract<br />Validation
-          </button>
-          <button type="button" data-node="regression"
-                  class="diag-node min-h-[66px] px-2 py-2.5 text-xs sm:text-sm leading-snug flex items-center justify-center text-center cursor-pointer">
-            Regression<br />Testing
-          </button>
-          <button type="button" data-node="multi_env"
-                  class="diag-node min-h-[66px] px-2 py-2.5 text-xs sm:text-sm leading-snug flex items-center justify-center text-center cursor-pointer">
-            Multi-Env<br />Compatibility
-          </button>
-        </div>
-      </div>
-
-      <!-- Down Arrow -->
-      <div class="v-connector" aria-hidden="true">
-        <div class="shaft"></div>
-        <div class="tip"></div>
-      </div>
-
-      <!-- 2. Middle Row: Config.file + Cyan Core Modules -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
-        <button type="button" data-node="config_file"
-                class="diag-node lg:col-span-2 min-h-[96px] lg:min-h-[110px] px-3 py-3 text-sm flex items-center justify-center text-center cursor-pointer">
-          Config.file<br /><span class="text-xs font-normal text-sky-200 mt-1 block">dev / staging</span>
-        </button>
-
-        <div class="lg:col-span-10 bg-cyanBand rounded-lg p-2.5 sm:p-3">
-          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
-            <button type="button" data-node="http_client"
-                    class="diag-node min-h-[70px] px-2 py-2.5 text-xs sm:text-sm leading-snug flex items-center justify-center text-center cursor-pointer">
-              HTTPX Client<br />Accelerators
-            </button>
-            <button type="button" data-node="auth_manager"
-                    class="diag-node min-h-[70px] px-2 py-2.5 text-xs sm:text-sm leading-snug flex items-center justify-center text-center cursor-pointer">
-              Bearer Token<br />Auth Client
-            </button>
-            <button type="button" data-node="pydantic_models"
-                    class="diag-node min-h-[70px] px-2 py-2.5 text-xs sm:text-sm leading-snug flex items-center justify-center text-center cursor-pointer">
-              Pydantic<br />Schemas
-            </button>
-            <button type="button" data-node="tenacity_retry"
-                    class="diag-node min-h-[70px] px-2 py-2.5 text-xs sm:text-sm leading-snug flex items-center justify-center text-center cursor-pointer">
-              Tenacity Retry<br />Engine
-            </button>
-            <button type="button" data-node="allure_logs"
-                    class="diag-node min-h-[70px] px-2 py-2.5 text-xs sm:text-sm leading-snug flex items-center justify-center text-center cursor-pointer">
-              Logs &amp; Allure<br />Attachments
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Vertical Arrows -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
-        <div class="lg:col-span-2 v-connector" aria-hidden="true">
-          <div class="shaft"></div>
-          <div class="tip"></div>
-        </div>
-        <div class="hidden lg:flex lg:col-span-10 v-connector" aria-hidden="true">
-          <div class="shaft"></div>
-          <div class="tip"></div>
-        </div>
-      </div>
-
-      <!-- 3. CI Integration -> Test Scripts Execution -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 items-center">
-        <button type="button" data-node="ci_integration"
-                class="diag-node lg:col-span-2 min-h-[74px] px-3 py-3 text-xs sm:text-sm leading-snug flex items-center justify-center text-center cursor-pointer">
-          CI Integration<br /><span class="text-[11px] font-normal text-sky-200 block">GitHub Actions</span>
-        </button>
-
-        <div class="hidden lg:flex lg:col-span-1 h-connector" aria-hidden="true">
-          <div class="shaft"></div>
-          <div class="tip"></div>
-        </div>
-
-        <button type="button" data-node="test_execution"
-                class="diag-node bg-navyBar lg:col-span-9 min-h-[74px] px-4 py-3 text-sm sm:text-lg font-bold flex items-center justify-center text-center cursor-pointer">
-          Test Scripts Execution (Pytest + Fixtures)
-        </button>
-      </div>
-
-      <!-- 4. Fan-Out Branching Bus -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4" aria-hidden="true">
-        <div class="hidden lg:block lg:col-span-2"></div>
-        <div class="lg:col-span-10 fanout-bus">
-          <div class="fanout-drop"></div>
-          <div class="fanout-drop"></div>
-          <div class="fanout-drop"></div>
-          <div class="fanout-drop"></div>
-        </div>
-      </div>
-
-      <!-- 5. Bottom Modules Row -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
-        <button type="button" data-node="defect_tracking"
-                class="diag-node lg:col-span-2 min-h-[82px] px-3 py-3 text-xs sm:text-sm leading-snug flex items-center justify-center text-center cursor-pointer">
-          Defect Tracking<br /><span class="text-[11px] font-normal text-sky-200 block">Artifacts &amp; Logs</span>
-        </button>
-
-        <div class="lg:col-span-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          <button type="button" data-node="test_data"
-                  class="diag-node min-h-[82px] px-3 py-3 text-xs sm:text-sm leading-snug flex items-center justify-center text-center cursor-pointer">
-            Test Data<br /><span class="text-[11px] font-normal text-sky-200 block">requirements.txt &amp; env</span>
-          </button>
-          <button type="button" data-node="endpoint_repo"
-                  class="diag-node min-h-[82px] px-3 py-3 text-xs sm:text-sm leading-snug flex items-center justify-center text-center cursor-pointer">
-            Endpoint Repository<br /><span class="text-[11px] font-normal text-sky-200 block">clients/user_client.py</span>
-          </button>
-          <button type="button" data-node="actions_controller"
-                  class="diag-node min-h-[82px] px-3 py-3 text-xs sm:text-sm leading-snug flex items-center justify-center text-center cursor-pointer">
-            Actions Controller<br /><span class="text-[11px] font-normal text-sky-200 block">core/http_client.py</span>
-          </button>
-          <button type="button" data-node="reporting"
-                  class="diag-node min-h-[82px] px-3 py-3 text-xs sm:text-sm leading-snug flex items-center justify-center text-center cursor-pointer">
-            Reporting<br /><span class="text-[11px] font-normal text-sky-200 block">allure-results</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- 6. Up & Down Arrows -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center" aria-hidden="true">
-        <div class="lg:col-span-2 up-connector">
-          <div class="tip"></div>
-          <div class="shaft"></div>
-        </div>
-        <div class="hidden lg:flex lg:col-span-10 v-connector">
-          <div class="shaft"></div>
-          <div class="tip"></div>
-        </div>
-      </div>
-
-      <!-- 7. Target Environments & AUT Bar -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
-        <div class="hidden lg:block lg:col-span-2"></div>
-        <div class="lg:col-span-10 bg-navyBar rounded-lg p-3 flex flex-col sm:flex-row items-center justify-between gap-3 text-white">
-          <div class="bg-white text-slate-900 rounded-md px-3 py-1.5 flex flex-wrap items-center gap-1.5 text-xs font-bold">
-            <span class="text-slate-500 mr-1">TARGETS:</span>
-            <span class="bg-slate-200 px-2 py-0.5 rounded">DEV</span>
-            <span class="bg-slate-200 px-2 py-0.5 rounded">STAGING</span>
-            <span class="bg-slate-200 px-2 py-0.5 rounded">UBUNTU CI</span>
-            <span class="bg-slate-200 px-2 py-0.5 rounded">GIT BASH</span>
-          </div>
-          <button type="button" data-node="target_apis"
-                  class="diag-node bg-cyanBand hover:bg-sky-500 px-5 py-2.5 text-xs sm:text-sm font-bold cursor-pointer">
-            Application Under Test (REST APIs)
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- Interactive Code & Stage Inspector -->
-    <section aria-label="Selected Workflow Stage or Module Code"
-             class="bg-white rounded-2xl border border-slate-200 border-l-4 border-l-navyBar p-5 sm:p-6 shadow-md">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-3 border-b border-slate-200">
-        <div>
-          <span id="inspector-badge" class="text-xs font-bold uppercase tracking-wider text-cyanBand">
-            Execution Step 01 of 08
-          </span>
-          <h2 id="inspector-title" class="text-lg sm:text-xl font-bold text-navyBar mt-0.5">
-            1. GitHub Actions Trigger
-          </h2>
-        </div>
-        <div class="flex items-center gap-2">
-          <code id="inspector-path" class="text-xs sm:text-sm font-mono font-semibold bg-sky-50 text-sky-900 border border-sky-200 px-3 py-1 rounded-lg">
-            .github/workflows/api-tests.yml
-          </code>
-          <button id="copy-inspector-btn" type="button"
-                  class="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 text-xs font-semibold transition cursor-pointer">
-            <span>Copy Code</span>
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <rect x="9" y="9" width="13" height="13" rx="2" />
-              <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+  <div class="min-h-screen flex flex-col">
+    <!-- Top Persistent Header Bar -->
+    <header class="sticky top-0 z-30 bg-navyBar text-white border-b border-sky-900/70 shadow-md">
+      <div class="max-w-full mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-3">
+        <!-- Left: Mobile Drawer Button + Brand -->
+        <div class="flex items-center gap-2.5 min-w-0">
+          <button id="mobile-menu-btn" type="button" aria-label="Toggle navigation menu"
+                  class="lg:hidden inline-flex items-center justify-center rounded-lg bg-white/10 hover:bg-white/20 p-2 text-white transition cursor-pointer">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
+
+          <a href="#/getting-started/project-overview" class="flex items-center gap-2.5 min-w-0 group">
+            <div class="w-8 h-8 rounded-lg bg-cyanBand flex items-center justify-center font-mono font-extrabold text-xs text-white shadow shrink-0">
+              API
+            </div>
+            <div class="min-w-0">
+              <div class="text-sm sm:text-base font-bold tracking-tight truncate group-hover:text-sky-200 transition">
+                rames-qa / API Automation Docs
+              </div>
+              <div class="hidden sm:block text-[11px] text-sky-200 font-mono truncate">
+                Multi-Environment-Configuration-Secure-Credential-Management
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <!-- Center/Right: CI Badge, Viewport Switcher, Theme Toggle, GitHub Link -->
+        <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          <span class="hidden xl:inline-flex items-center gap-1.5 rounded-full bg-emerald-500/20 border border-emerald-400/40 px-3 py-1 text-xs font-semibold text-emerald-200">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            CI Runs #26–#30 Passing
+          </span>
+
+          <!-- Viewport Preview Switcher (Desktop / Tablet / Mobile) -->
+          <div class="hidden md:inline-flex items-center rounded-lg bg-white/10 border border-white/15 p-0.5" role="group" aria-label="Viewport Preview Width">
+            <button type="button" data-viewport="desktop" title="Full Desktop Layout"
+                    class="vp-btn rounded-md bg-cyanBand text-white px-2.5 py-1 text-xs font-semibold transition cursor-pointer">
+              Desktop
+            </button>
+            <button type="button" data-viewport="tablet" title="Tablet Layout Preview (768px)"
+                    class="vp-btn rounded-md text-sky-100 hover:bg-white/10 px-2.5 py-1 text-xs font-semibold transition cursor-pointer">
+              Tablet
+            </button>
+            <button type="button" data-viewport="mobile" title="Mobile Layout Preview (390px)"
+                    class="vp-btn rounded-md text-sky-100 hover:bg-white/10 px-2.5 py-1 text-xs font-semibold transition cursor-pointer">
+              Mobile
+            </button>
+          </div>
+
+          <!-- Light / Dark Theme Toggle -->
+          <button id="theme-toggle-btn" type="button" aria-label="Toggle Light or Dark Theme"
+                  class="inline-flex items-center gap-1.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 px-2.5 py-1.5 text-xs font-semibold text-white transition cursor-pointer">
+            <span id="theme-icon" class="font-mono">☀</span>
+            <span id="theme-label" class="hidden sm:inline">Light</span>
+          </button>
+
+          <a href="https://github.com/rames-qa/Multi-Environment-Configuration-Secure-Credential-Management"
+             target="_blank" rel="noopener noreferrer"
+             class="inline-flex items-center gap-1 rounded-lg bg-cyanBand hover:bg-sky-500 px-3 py-1.5 text-xs font-semibold text-white shadow transition">
+            <span>GitHub</span>
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </a>
         </div>
       </div>
+    </header>
 
-      <p id="inspector-desc" class="text-sm sm:text-base text-slate-600 mt-3 mb-4">
-        Starts the ubuntu-latest runner on pushes or pull requests targeting main, or when manually dispatched via workflow_dispatch.
-      </p>
+    <!-- Sidebar + Main Content Container -->
+    <div class="flex-1 flex relative max-w-full">
+      <!-- Persistent Sidebar Navigation -->
+      <aside id="sidebar" aria-label="Documentation Navigation Sidebar"
+             class="fixed lg:sticky top-16 left-0 z-40 h-[calc(100vh-4rem)] w-72 shrink-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 overflow-y-auto transition-transform duration-200 -translate-x-full lg:translate-x-0">
+        <div class="p-4">
+          <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-200 dark:border-slate-800">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              Framework Guide (21 Pages)
+            </span>
+            <div class="flex items-center gap-1">
+              <button id="expand-all-btn" type="button"
+                      class="text-[11px] font-semibold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 cursor-pointer">
+                Expand
+              </button>
+              <button id="collapse-all-btn" type="button"
+                      class="text-[11px] font-semibold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 cursor-pointer">
+                Collapse
+              </button>
+            </div>
+          </div>
 
-      <pre class="bg-slate-950 text-slate-100 rounded-xl p-4 text-xs sm:text-sm font-mono overflow-x-auto leading-relaxed"><code id="inspector-code">name: API Test Automation
+          <!-- Dynamic Sidebar Categories & Links Rendered via JS -->
+          <nav id="sidebar-nav" class="space-y-2"></nav>
+        </div>
+      </aside>
 
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-  workflow_dispatch:</code></pre>
-    </section>
+      <!-- Main Page Content Area -->
+      <div class="flex-1 min-w-0 w-full">
+        <div id="viewport-frame" class="w-full mx-auto transition-all duration-200 px-4 sm:px-6 lg:px-8 py-6">
+          <!-- Breadcrumb & Quick Actions Bar -->
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-5 pb-3 border-b border-slate-200 dark:border-slate-800">
+            <nav id="breadcrumb" aria-label="Breadcrumb" class="flex flex-wrap items-center gap-1.5 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+              <!-- Populated dynamically -->
+            </nav>
+            <div class="flex items-center gap-2 text-xs font-mono text-slate-500 dark:text-slate-400">
+              <span id="page-route-badge" class="rounded-md bg-slate-200/80 dark:bg-slate-800 px-2.5 py-1 text-slate-700 dark:text-slate-300">
+                #/getting-started/project-overview
+              </span>
+            </div>
+          </div>
 
-  </main>
+          <!-- Active Page Content Mount -->
+          <main id="page-content" class="space-y-6"></main>
 
-  <footer class="bg-navyBar text-sky-200 text-xs py-5 px-4 text-center">
-    rames-qa/Multi-Environment-Configuration-Secure-Credential-Management &bull; 8-Step Execution Workflow &amp; CI Runs #26–#30 Successful
-  </footer>
+          <!-- Persistent Previous / Next Page Footer Bar -->
+          <footer class="mt-10 pt-5 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+            <button id="prev-page-btn" type="button"
+                    class="flex items-center justify-between gap-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-cyanBand px-4 py-3 text-left transition cursor-pointer">
+              <div>
+                <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Previous Page</div>
+                <div id="prev-page-title" class="text-sm font-semibold text-navyBar dark:text-sky-300">—</div>
+              </div>
+              <span class="text-lg font-bold text-cyanBand">&larr;</span>
+            </button>
+
+            <button id="next-page-btn" type="button"
+                    class="flex items-center justify-between gap-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-cyanBand px-4 py-3 text-right transition cursor-pointer">
+              <span class="text-lg font-bold text-cyanBand">&rarr;</span>
+              <div>
+                <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Next Page</div>
+                <div id="next-page-title" class="text-sm font-semibold text-navyBar dark:text-sky-300">—</div>
+              </div>
+            </button>
+          </footer>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script>
-    const workflowSteps = {
-      step_1: {
-        badge: "Execution Step 01 of 08",
-        title: "1. GitHub Actions Trigger",
-        path: ".github/workflows/api-tests.yml",
-        desc: "Starts the ubuntu-latest runner on pushes or pull requests targeting main, or when manually dispatched via workflow_dispatch.",
-        nodeKey: "ci_integration",
-        code: `name: API Test Automation
-
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-  workflow_dispatch:
-
-jobs:
-  api-tests:
-    name: Execute API Automation Tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v5`
+    // =========================================================================
+    // 1. MULTI-PAGE CATALOG (6 Categories, 21 Process Pages)
+    // =========================================================================
+    const NAV_CATEGORIES = [
+      {
+        id: "getting-started",
+        title: "1. Getting Started",
+        pages: [
+          { id: "project-overview", title: "Project Overview", file: "README.md" },
+          { id: "installation-setup", title: "Installation & Setup", file: "requirements.txt" },
+          { id: "project-structure", title: "Project Structure", file: "repository tree" },
+        ],
       },
-      step_2: {
-        badge: "Execution Step 02 of 08",
-        title: "2. Load Environment Configuration",
-        path: "config/settings.py & config/staging.env",
-        desc: "Reads TEST_ENV (defaulting to dev or set to staging in CI), loads config/<env>.env, and exposes base_url, timeout, and max_retries.",
-        nodeKey: "config_file",
-        code: `# config/settings.py
-import os
+      {
+        id: "framework-architecture",
+        title: "2. Framework Architecture",
+        pages: [
+          { id: "overall-architecture", title: "Overall Architecture", file: "layered diagram" },
+          { id: "execution-workflow", title: "Execution Workflow", file: "8-stage pipeline" },
+          { id: "framework-components", title: "Framework Components", file: "core/ & clients/" },
+        ],
+      },
+      {
+        id: "configuration-security",
+        title: "3. Configuration & Security",
+        pages: [
+          { id: "environment-configuration", title: "Environment Configuration", file: "config/settings.py" },
+          { id: "secure-credential-management", title: "Secure Credential Management", file: "GitHub Secrets" },
+          { id: "authentication-management", title: "Authentication Management", file: "core/auth_manager.py" },
+        ],
+      },
+      {
+        id: "api-automation",
+        title: "4. API Automation",
+        pages: [
+          { id: "http-client-api-communication", title: "HTTP Client & API Communication", file: "core/http_client.py" },
+          { id: "test-case-implementation", title: "Test Case Implementation", file: "tests/test_users.py" },
+          { id: "request-response-validation", title: "Request & Response Validation", file: "tests/conftest.py" },
+          { id: "schema-validation", title: "Schema Validation", file: "models/user_models.py" },
+          { id: "test-data-management", title: "Test Data Management", file: "config/staging.env" },
+        ],
+      },
+      {
+        id: "reliability-debugging",
+        title: "5. Reliability & Debugging",
+        pages: [
+          { id: "retry-mechanism", title: "Retry Mechanism", file: "tenacity @retry" },
+          { id: "error-handling", title: "Error Handling", file: "401 & status guards" },
+          { id: "logging-debugging", title: "Logging & Debugging", file: "allure.step & logs" },
+        ],
+      },
+      {
+        id: "reporting-cicd",
+        title: "6. Reporting & CI/CD",
+        pages: [
+          { id: "allure-reporting", title: "Allure Reporting", file: "allure-results/" },
+          { id: "github-actions-integration", title: "GitHub Actions Integration", file: ".github/workflows/api-tests.yml" },
+          { id: "automated-test-execution", title: "Automated Test Execution", file: "CI Runs #26–#30" },
+          { id: "test-results-dashboard", title: "Test Results Dashboard", file: "CI metrics & runs" },
+        ],
+      },
+    ];
+
+    // Flatten ordered pages for Previous/Next navigation
+    const FLAT_PAGES = [];
+    NAV_CATEGORIES.forEach((cat) => {
+      cat.pages.forEach((pg) => {
+        FLAT_PAGES.push({
+          categoryId: cat.id,
+          categoryTitle: cat.title,
+          pageId: pg.id,
+          pageTitle: pg.title,
+          file: pg.file,
+          route: `#/${cat.id}/${pg.id}`,
+        });
+      });
+    });
+
+    // =========================================================================
+    // 2. SHARED CODE SNIPPETS & ARCHITECTURE DATA
+    // =========================================================================
+    const CODE_SNIPPETS = {
+      requirements: `pytest==8.3.3
+httpx==0.27.2
+pydantic==2.9.2
+pydantic-settings==2.6.0
+tenacity==9.0.0
+allure-pytest==2.13.5
+faker==30.8.1`,
+
+      settings: `import os
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -782,16 +437,16 @@ class Settings(BaseSettings):
     )
 
 
-settings = Settings()`
-      },
-      step_3: {
-        badge: "Execution Step 03 of 08",
-        title: "3. Load Secure Credentials",
-        path: "core/auth_manager.py & .github/workflows/api-tests.yml",
-        desc: "Injects CLIENT_ID and CLIENT_SECRET from GitHub Actions secrets and uses BearerTokenAuth to attach Bearer headers and refresh on 401.",
-        nodeKey: "auth_manager",
-        code: `# core/auth_manager.py
-from typing import Generator
+settings = Settings()`,
+
+      stagingEnv: `BASE_URL=https://jsonplaceholder.typicode.com
+AUTH_URL=https://jsonplaceholder.typicode.com/posts
+CLIENT_ID=demo-client
+CLIENT_SECRET=demo-secret
+TIMEOUT=10.0
+MAX_RETRIES=2`,
+
+      authManager: `from typing import Generator
 import httpx
 
 
@@ -815,21 +470,93 @@ class BearerTokenAuth(httpx.Auth):
     def auth_flow(self, request: httpx.Request) -> Generator[httpx.Request, httpx.Response, None]:
         if not self._token:
             self._fetch_token()
+
         request.headers["Authorization"] = f"Bearer {self._token}"
         response = yield request
+
+        # Auto-refresh once on 401 Unauthorized and retry
         if response.status_code == 401:
             self._fetch_token()
             request.headers["Authorization"] = f"Bearer {self._token}"
-            yield request`
-      },
-      step_4: {
-        badge: "Execution Step 04 of 08",
-        title: "4. Initialize HTTPX Client",
-        path: "core/http_client.py & tests/conftest.py",
-        desc: "Instantiates APIClient with httpx.Client, Tenacity retry backoff, and session-scoped api_client and user_client fixtures.",
-        nodeKey: "http_client",
-        code: `# tests/conftest.py
-import pytest
+            yield request`,
+
+      httpClient: `import json
+import logging
+import allure
+import httpx
+from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
+from config.settings import settings
+
+logger = logging.getLogger("api_framework")
+
+
+class APIClient:
+    def __init__(self, base_url: str = settings.base_url, headers: dict | None = None, auth: httpx.Auth | None = None):
+        merged_headers = {"Accept": "application/json"}
+        if headers:
+            merged_headers.update(headers)
+        self.client = httpx.Client(
+            base_url=base_url,
+            timeout=settings.timeout,
+            headers=merged_headers,
+            auth=auth,
+        )
+
+    @retry(
+        stop=stop_after_attempt(settings.max_retries),
+        wait=wait_exponential(multiplier=1, min=1, max=5),
+        retry=retry_if_exception_type((httpx.TransportError, httpx.TimeoutException)),
+        reraise=True,
+    )
+    def request(self, method: str, endpoint: str, **kwargs) -> httpx.Response:
+        with allure.step(f"{method.upper()} {endpoint}"):
+            logger.info("Request: %s %s", method.upper(), endpoint)
+            response = self.client.request(method, endpoint, **kwargs)
+
+            allure.attach(
+                json.dumps(dict(response.request.headers), indent=2),
+                name="Request Headers",
+                attachment_type=allure.attachment_type.JSON,
+            )
+            allure.attach(
+                response.text,
+                name=f"Response Body ({response.status_code})",
+                attachment_type=allure.attachment_type.JSON,
+            )
+            return response
+
+    def get(self, endpoint: str, **kwargs) -> httpx.Response:
+        return self.request("GET", endpoint, **kwargs)
+
+    def post(self, endpoint: str, **kwargs) -> httpx.Response:
+        return self.request("POST", endpoint, **kwargs)
+
+    def close(self):
+        self.client.close()`,
+
+      userClient: `from core.http_client import APIClient
+
+
+class UserClient:
+    def __init__(self, api_client: APIClient):
+        self.api = api_client
+
+    def get_user(self, user_id: int):
+        return self.api.get(f"/users/{user_id}")
+
+    def create_user(self, payload: dict):
+        return self.api.post("/users", json=payload)`,
+
+      userModel: `from pydantic import BaseModel, EmailStr
+
+
+class UserResponse(BaseModel):
+    id: int
+    name: str
+    email: EmailStr
+    role: str | None = None`,
+
+      conftest: `import pytest
 from clients.user_client import UserClient
 from config.settings import settings
 from core.http_client import APIClient
@@ -847,25 +574,9 @@ def api_client():
 
 @pytest.fixture(scope="session")
 def user_client(api_client) -> UserClient:
-    return UserClient(api_client)`
-      },
-      step_5: {
-        badge: "Execution Step 05 of 08",
-        title: "5. Execute Pytest Test Cases",
-        path: ".github/workflows/api-tests.yml",
-        desc: "Verifies Python 3.12 and allure-pytest, debugs test collection with --collect-only -vv, and runs Pytest writing results to allure-results.",
-        nodeKey: "test_execution",
-        code: `python -m pytest tests --collect-only -vv
-TEST_ENV=staging python -m pytest tests -vv -s --alluredir=allure-results`
-      },
-      step_6: {
-        badge: "Execution Step 06 of 08",
-        title: "6. Validate API Responses",
-        path: "models/user_models.py & tests/test_users.py",
-        desc: "Checks HTTP 200 responses, validates payload schemas with UserResponse.model_validate(), and enforces domain assertions.",
-        nodeKey: "schema_validation",
-        code: `# tests/test_users.py
-import allure
+    return UserClient(api_client)`,
+
+      testUsers: `import allure
 from models.user_models import UserResponse
 
 
@@ -873,414 +584,1298 @@ from models.user_models import UserResponse
 @allure.story("Retrieve User Profile")
 def test_get_user_schema_and_business_rules(user_client):
     response = user_client.get_user(user_id=1)
+
+    assert response.status_code == 200, f"Expected 200, got {response.status_code}"
+    user = UserResponse.model_validate(response.json())
+
+    assert user.id == 1
+    assert "@" in user.email`,
+
+      workflowYml: `name: API Test Automation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  api-tests:
+    name: Execute API Automation Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+
+      - name: Set Up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Verify Dependencies
+        run: |
+          python --version
+          python -m pytest --version
+          pip show allure-pytest
+
+      - name: Debug Test Collection
+        run: |
+          ls -la
+          ls -la tests/
+          python -m pytest tests --collect-only -vv
+
+      - name: Run API Tests
+        env:
+          TEST_ENV: staging
+          CLIENT_ID: \${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: \${{ secrets.CLIENT_SECRET }}
+        run: |
+          python -m pytest tests -vv -s --alluredir=allure-results
+
+      - name: Upload Allure Results
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: allure-results
+          path: allure-results/
+          if-no-files-found: warn
+          retention-days: 14`,
+    };
+
+    const DIAGRAM_NODES = {
+      functional: {
+        title: "Functional Testing",
+        file: "tests/test_health_and_users.py",
+        desc: "Verifies active environment settings and endpoint behavior across functional API flows.",
+        code: `def test_health_and_post(api_client):\n    response = api_client.get("/posts/1")\n    assert response.status_code == 200`,
+      },
+      api_testing: {
+        title: "Webservices / API Testing",
+        file: "tests/test_users.py",
+        desc: "Executes REST requests through UserClient and APIClient, validates Pydantic schemas, and asserts business rules.",
+        code: CODE_SNIPPETS.testUsers,
+      },
+      smoke_suite: {
+        title: "Health & Smoke Suite",
+        file: "tests/test_health_and_users.py",
+        desc: "Rapid smoke verification confirming connectivity, environment selection, and baseline 200 responses.",
+        code: `TEST_ENV=staging python -m pytest tests --collect-only -vv`,
+      },
+      schema_validation: {
+        title: "Schema & Contract Validation",
+        file: "models/user_models.py",
+        desc: "Validates response payloads with Pydantic models (id, name, EmailStr email, optional role).",
+        code: CODE_SNIPPETS.userModel,
+      },
+      regression: {
+        title: "Regression Testing",
+        file: ".github/workflows/api-tests.yml",
+        desc: "Runs full Pytest regression checks in CI on push, pull_request, and workflow_dispatch (Runs #26–#30 passing).",
+        code: `TEST_ENV=staging python -m pytest tests -vv -s --alluredir=allure-results`,
+      },
+      multi_env: {
+        title: "Multi-Env Compatibility",
+        file: "config/settings.py & config/staging.env",
+        desc: "Switches seamlessly between dev and staging environments via TEST_ENV without modifying test code.",
+        code: CODE_SNIPPETS.stagingEnv,
+      },
+      config_file: {
+        title: "Config.file (Environment & Settings)",
+        file: "config/settings.py",
+        desc: "Left rail configuration loader reading TEST_ENV, base_url, auth_url, credentials, timeout, and retries.",
+        code: CODE_SNIPPETS.settings,
+      },
+      http_client: {
+        title: "HTTPX Client Accelerators",
+        file: "core/http_client.py",
+        desc: "Reusable HTTPX client wrapper exposing request(), get(), post(), and close() with default headers.",
+        code: CODE_SNIPPETS.httpClient,
+      },
+      auth_manager: {
+        title: "Bearer Token Auth Client",
+        file: "core/auth_manager.py",
+        desc: "Custom httpx.Auth flow fetching bearer tokens and automatically refreshing once on 401 Unauthorized.",
+        code: CODE_SNIPPETS.authManager,
+      },
+      pydantic_models: {
+        title: "Pydantic Schemas",
+        file: "models/user_models.py",
+        desc: "Typed contract models ensuring response fields match expected data types and email formats.",
+        code: CODE_SNIPPETS.userModel,
+      },
+      tenacity_retry: {
+        title: "Tenacity Retry Engine",
+        file: "core/http_client.py",
+        desc: "Exponential backoff retry policy for httpx.TransportError and httpx.TimeoutException.",
+        code: `@retry(\n    stop=stop_after_attempt(settings.max_retries),\n    wait=wait_exponential(multiplier=1, min=1, max=5),\n    retry=retry_if_exception_type((httpx.TransportError, httpx.TimeoutException)),\n    reraise=True,\n)`,
+      },
+      allure_logs: {
+        title: "Logs & Allure Attachments",
+        file: "core/http_client.py",
+        desc: "Logs requests and attaches serialized request headers and response payloads to Allure steps.",
+        code: `with allure.step(f"{method.upper()} {endpoint}"):\n    logger.info("Request: %s %s", method.upper(), endpoint)`,
+      },
+      ci_integration: {
+        title: "CI Integration (GitHub Actions)",
+        file: ".github/workflows/api-tests.yml",
+        desc: "Left rail CI trigger and runner orchestration on ubuntu-latest with GitHub Secrets injection.",
+        code: CODE_SNIPPETS.workflowYml,
+      },
+      test_execution: {
+        title: "Test Scripts Execution",
+        file: "tests/conftest.py",
+        desc: "Central execution bar running Pytest test suites backed by session-scoped api_client and user_client fixtures.",
+        code: CODE_SNIPPETS.conftest,
+      },
+      defect_tracking: {
+        title: "Defect Tracking & Artifacts",
+        file: ".github/workflows/api-tests.yml",
+        desc: "Left rail defect & diagnostics channel preserving allure-results artifacts for 14 days even on failure.",
+        code: `- name: Upload Allure Results\n  if: always()\n  uses: actions/upload-artifact@v5`,
+      },
+      test_data: {
+        title: "Test Data",
+        file: "config/staging.env & requirements.txt",
+        desc: "Lower pillar managing environment endpoints, retry parameters, and Faker test data support.",
+        code: CODE_SNIPPETS.stagingEnv,
+      },
+      endpoint_repo: {
+        title: "Endpoint Repository",
+        file: "clients/user_client.py",
+        desc: "Lower pillar encapsulating domain endpoints (/users/{user_id}, /users) behind clean methods.",
+        code: CODE_SNIPPETS.userClient,
+      },
+      actions_controller: {
+        title: "Actions Controller",
+        file: "core/http_client.py",
+        desc: "Lower pillar coordinating HTTP verb dispatch, retry handling, logging, and Allure attachments.",
+        code: `def get(self, endpoint: str, **kwargs):\n    return self.request("GET", endpoint, **kwargs)\n\ndef post(self, endpoint: str, **kwargs):\n    return self.request("POST", endpoint, **kwargs)`,
+      },
+      reporting: {
+        title: "Reporting",
+        file: "allure-results/",
+        desc: "Lower pillar generating Allure test execution records and serving interactive reports.",
+        code: `allure serve allure-results`,
+      },
+      target_apis: {
+        title: "Application Under Test (REST APIs)",
+        file: "config/staging.env",
+        desc: "Target API service (e.g., https://jsonplaceholder.typicode.com) validated across dev, staging, and CI.",
+        code: `BASE_URL=https://jsonplaceholder.typicode.com`,
+      },
+    };
+
+    const EIGHT_STEPS = [
+      { num: "01", name: "GitHub Actions Trigger", tag: "api-tests.yml", desc: "Triggered on push or pull_request to main, or manual workflow_dispatch.", node: "ci_integration", code: `on:\n  push:\n    branches: [main]\n  pull_request:\n    branches: [main]\n  workflow_dispatch:` },
+      { num: "02", name: "Load Environment Configuration", tag: "settings.py", desc: "Sets TEST_ENV (staging/dev) and loads base_url, timeout, and max_retries.", node: "config_file", code: CODE_SNIPPETS.settings },
+      { num: "03", name: "Load Secure Credentials", tag: "GitHub Secrets", desc: "Injects CLIENT_ID & CLIENT_SECRET via environment variables and refreshes Bearer token on 401.", node: "auth_manager", code: CODE_SNIPPETS.authManager },
+      { num: "04", name: "Initialize HTTPX Client", tag: "http_client.py", desc: "Creates session api_client and user_client fixtures with Tenacity retries.", node: "http_client", code: CODE_SNIPPETS.conftest },
+      { num: "05", name: "Execute Pytest Test Cases", tag: "pytest tests/", desc: "Verifies Python 3.12 & allure-pytest, collects tests, and runs Pytest.", node: "test_execution", code: `python -m pytest tests --collect-only -vv\nTEST_ENV=staging python -m pytest tests -vv -s --alluredir=allure-results` },
+      { num: "06", name: "Validate API Responses", tag: "user_models.py", desc: "Asserts HTTP 200 status, validates Pydantic UserResponse schema, and checks fields.", node: "schema_validation", code: CODE_SNIPPETS.testUsers },
+      { num: "07", name: "Generate Allure Reports", tag: "allure-results/", desc: "Attaches request headers and response bodies under allure.step blocks.", node: "reporting", code: `allure.attach(\n    response.text,\n    name=f"Response Body ({response.status_code})",\n    attachment_type=allure.attachment_type.JSON,\n)` },
+      { num: "08", name: "Publish CI Results", tag: "upload-artifact@v5", desc: "Uploads allure-results with 14-day retention and reports summary metrics.", node: "defect_tracking", code: `- name: Upload Allure Results\n  if: always()\n  uses: actions/upload-artifact@v5\n  with:\n    name: allure-results\n    path: allure-results/\n    retention-days: 14` },
+    ];
+
+    // =========================================================================
+    // 3. HELPER RENDERERS (Code Blocks, Cards, Layered Diagram, Workflow)
+    // =========================================================================
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function renderCodeBlock(title, codeText) {
+      const id = "cb-" + Math.random().toString(36).slice(2, 9);
+      return `
+        <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-950 text-slate-100 overflow-hidden shadow-sm">
+          <div class="flex items-center justify-between px-4 py-2.5 bg-slate-900 border-b border-slate-800">
+            <span class="font-mono text-xs font-semibold text-sky-300">${escapeHtml(title)}</span>
+            <button type="button" data-copy-target="${id}"
+                    class="copy-btn inline-flex items-center gap-1.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 text-xs font-medium transition cursor-pointer">
+              <span>Copy</span>
+            </button>
+          </div>
+          <pre class="p-4 text-xs sm:text-[13px] font-mono overflow-x-auto leading-relaxed"><code id="${id}">${escapeHtml(codeText)}</code></pre>
+        </div>
+      `;
+    }
+
+    function renderPageHeader(catTitle, pageTitle, subtitle, badgeText) {
+      return `
+        <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-cyanBand">${escapeHtml(catTitle)}</span>
+            <span class="rounded-full bg-sky-500/15 text-sky-700 dark:text-sky-300 border border-sky-500/30 px-3 py-0.5 text-xs font-mono font-semibold">
+              ${escapeHtml(badgeText)}
+            </span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-navyBar dark:text-white">${escapeHtml(pageTitle)}</h1>
+          <p class="mt-2 text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">${escapeHtml(subtitle)}</p>
+        </div>
+      `;
+    }
+
+    function renderLayeredDiagramHtml(selectedNode = "api_testing") {
+      const isAct = (k) => (k === selectedNode ? "active-node" : "");
+      return `
+        <div class="rounded-2xl bg-white dark:bg-slate-900 border-2 border-sky-200 dark:border-sky-900/60 p-4 sm:p-6 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <div>
+              <h2 class="text-base sm:text-lg font-bold text-navyBar dark:text-white">Layered Framework Architecture Diagram</h2>
+              <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Click any cyan/navy component block to inspect its file and implementation.</p>
+            </div>
+            <span class="text-xs font-mono bg-sky-50 dark:bg-sky-950 text-sky-800 dark:text-sky-300 border border-sky-200 dark:border-sky-800 px-3 py-1 rounded-full font-semibold">
+              Interactive Layer Map
+            </span>
+          </div>
+
+          <!-- Top Cyan Band -->
+          <div class="bg-cyanBand rounded-xl p-2.5 sm:p-3">
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+              <button type="button" data-diag="functional" class="diag-node ${isAct("functional")} min-h-[64px] px-2 py-2 text-xs sm:text-sm flex items-center justify-center text-center cursor-pointer">Functional<br/>Testing</button>
+              <button type="button" data-diag="api_testing" class="diag-node ${isAct("api_testing")} min-h-[64px] px-2 py-2 text-xs sm:text-sm flex items-center justify-center text-center cursor-pointer">Webservices /<br/>API Testing</button>
+              <button type="button" data-diag="smoke_suite" class="diag-node ${isAct("smoke_suite")} min-h-[64px] px-2 py-2 text-xs sm:text-sm flex items-center justify-center text-center cursor-pointer">Health &amp; Smoke<br/>Suite</button>
+              <button type="button" data-diag="schema_validation" class="diag-node ${isAct("schema_validation")} min-h-[64px] px-2 py-2 text-xs sm:text-sm flex items-center justify-center text-center cursor-pointer">Schema &amp; Contract<br/>Validation</button>
+              <button type="button" data-diag="regression" class="diag-node ${isAct("regression")} min-h-[64px] px-2 py-2 text-xs sm:text-sm flex items-center justify-center text-center cursor-pointer">Regression<br/>Testing</button>
+              <button type="button" data-diag="multi_env" class="diag-node ${isAct("multi_env")} min-h-[64px] px-2 py-2 text-xs sm:text-sm flex items-center justify-center text-center cursor-pointer">Multi-Env<br/>Compatibility</button>
+            </div>
+          </div>
+
+          <div class="v-connector" aria-hidden="true"><div class="shaft"></div><div class="tip"></div></div>
+
+          <!-- Middle Row: Config.file + Cyan Accelerators -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-center">
+            <button type="button" data-diag="config_file" class="diag-node ${isAct("config_file")} lg:col-span-2 min-h-[92px] lg:min-h-[104px] px-3 py-2 text-xs sm:text-sm flex flex-col items-center justify-center text-center cursor-pointer">
+              <span>Config.file</span>
+              <span class="text-[11px] font-normal text-sky-200 mt-0.5">dev / staging</span>
+            </button>
+            <div class="lg:col-span-10 bg-cyanBand rounded-xl p-2.5 sm:p-3">
+              <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
+                <button type="button" data-diag="http_client" class="diag-node ${isAct("http_client")} min-h-[68px] px-2 py-2 text-xs sm:text-sm flex items-center justify-center text-center cursor-pointer">HTTPX Client<br/>Accelerators</button>
+                <button type="button" data-diag="auth_manager" class="diag-node ${isAct("auth_manager")} min-h-[68px] px-2 py-2 text-xs sm:text-sm flex items-center justify-center text-center cursor-pointer">Bearer Token<br/>Auth Client</button>
+                <button type="button" data-diag="pydantic_models" class="diag-node ${isAct("pydantic_models")} min-h-[68px] px-2 py-2 text-xs sm:text-sm flex items-center justify-center text-center cursor-pointer">Pydantic<br/>Schemas</button>
+                <button type="button" data-diag="tenacity_retry" class="diag-node ${isAct("tenacity_retry")} min-h-[68px] px-2 py-2 text-xs sm:text-sm flex items-center justify-center text-center cursor-pointer">Tenacity Retry<br/>Engine</button>
+                <button type="button" data-diag="allure_logs" class="diag-node ${isAct("allure_logs")} min-h-[68px] px-2 py-2 text-xs sm:text-sm flex items-center justify-center text-center cursor-pointer">Logs &amp; Allure<br/>Attachments</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-center" aria-hidden="true">
+            <div class="lg:col-span-2 v-connector"><div class="shaft"></div><div class="tip"></div></div>
+            <div class="hidden lg:flex lg:col-span-10 v-connector"><div class="shaft"></div><div class="tip"></div></div>
+          </div>
+
+          <!-- CI Integration -> Test Scripts Execution -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 items-center">
+            <button type="button" data-diag="ci_integration" class="diag-node ${isAct("ci_integration")} lg:col-span-2 min-h-[70px] px-3 py-2 text-xs sm:text-sm flex flex-col items-center justify-center text-center cursor-pointer">
+              <span>CI Integration</span>
+              <span class="text-[11px] font-normal text-sky-200">GitHub Actions</span>
+            </button>
+            <div class="hidden lg:flex lg:col-span-1 h-connector" aria-hidden="true"><div class="shaft"></div><div class="tip"></div></div>
+            <button type="button" data-diag="test_execution" class="diag-node ${isAct("test_execution")} bg-navyBar lg:col-span-9 min-h-[70px] px-4 py-2.5 text-sm sm:text-base font-bold flex items-center justify-center text-center cursor-pointer">
+              Test Scripts Execution (Pytest + Session Fixtures)
+            </button>
+          </div>
+
+          <!-- Fan-out bus -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5" aria-hidden="true">
+            <div class="hidden lg:block lg:col-span-2"></div>
+            <div class="lg:col-span-10 fanout-bus">
+              <div class="fanout-drop"></div>
+              <div class="fanout-drop"></div>
+              <div class="fanout-drop"></div>
+              <div class="fanout-drop"></div>
+            </div>
+          </div>
+
+          <!-- Bottom Row: Defect Tracking + 4 Pillars -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-stretch">
+            <button type="button" data-diag="defect_tracking" class="diag-node ${isAct("defect_tracking")} lg:col-span-2 min-h-[76px] px-3 py-2 text-xs sm:text-sm flex flex-col items-center justify-center text-center cursor-pointer">
+              <span>Defect Tracking</span>
+              <span class="text-[11px] font-normal text-sky-200">Artifacts &amp; Logs</span>
+            </button>
+            <div class="lg:col-span-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <button type="button" data-diag="test_data" class="diag-node ${isAct("test_data")} min-h-[76px] px-3 py-2 text-xs sm:text-sm flex flex-col items-center justify-center text-center cursor-pointer">
+                <span>Test Data</span>
+                <span class="text-[11px] font-normal text-sky-200">env &amp; requirements</span>
+              </button>
+              <button type="button" data-diag="endpoint_repo" class="diag-node ${isAct("endpoint_repo")} min-h-[76px] px-3 py-2 text-xs sm:text-sm flex flex-col items-center justify-center text-center cursor-pointer">
+                <span>Endpoint Repository</span>
+                <span class="text-[11px] font-normal text-sky-200">clients/user_client.py</span>
+              </button>
+              <button type="button" data-diag="actions_controller" class="diag-node ${isAct("actions_controller")} min-h-[76px] px-3 py-2 text-xs sm:text-sm flex flex-col items-center justify-center text-center cursor-pointer">
+                <span>Actions Controller</span>
+                <span class="text-[11px] font-normal text-sky-200">core/http_client.py</span>
+              </button>
+              <button type="button" data-diag="reporting" class="diag-node ${isAct("reporting")} min-h-[76px] px-3 py-2 text-xs sm:text-sm flex flex-col items-center justify-center text-center cursor-pointer">
+                <span>Reporting</span>
+                <span class="text-[11px] font-normal text-sky-200">allure-results</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-center" aria-hidden="true">
+            <div class="lg:col-span-2 up-connector"><div class="tip"></div><div class="shaft"></div></div>
+            <div class="hidden lg:flex lg:col-span-10 v-connector"><div class="shaft"></div><div class="tip"></div></div>
+          </div>
+
+          <!-- Target AUT Bar -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-center">
+            <div class="hidden lg:block lg:col-span-2"></div>
+            <div class="lg:col-span-10 bg-navyBar rounded-xl p-3 flex flex-col sm:flex-row items-center justify-between gap-3 text-white">
+              <div class="bg-white text-slate-900 rounded-lg px-3 py-1.5 flex flex-wrap items-center gap-1.5 text-xs font-bold">
+                <span class="text-slate-500">ENVS:</span>
+                <span class="bg-slate-200 px-2 py-0.5 rounded">DEV</span>
+                <span class="bg-slate-200 px-2 py-0.5 rounded">STAGING</span>
+                <span class="bg-slate-200 px-2 py-0.5 rounded">UBUNTU CI</span>
+                <span class="bg-slate-200 px-2 py-0.5 rounded">GIT BASH</span>
+              </div>
+              <button type="button" data-diag="target_apis" class="diag-node ${isAct("target_apis")} bg-cyanBand hover:bg-sky-500 px-4 py-2 text-xs sm:text-sm font-bold cursor-pointer">
+                Application Under Test (REST APIs)
+              </button>
+            </div>
+          </div>
+
+          <!-- Selected Node Inspector -->
+          <div id="diag-inspector" class="mt-5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-4">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <h3 id="diag-title" class="text-sm sm:text-base font-bold text-navyBar dark:text-sky-300">
+                ${escapeHtml(DIAGRAM_NODES[selectedNode].title)}
+              </h3>
+              <span id="diag-file" class="text-xs font-mono font-semibold text-sky-700 dark:text-sky-300 bg-sky-100 dark:bg-sky-900/40 px-2.5 py-0.5 rounded">
+                ${escapeHtml(DIAGRAM_NODES[selectedNode].file)}
+              </span>
+            </div>
+            <p id="diag-desc" class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-3">
+              ${escapeHtml(DIAGRAM_NODES[selectedNode].desc)}
+            </p>
+            <pre class="rounded-lg bg-slate-950 text-slate-100 p-3 text-xs font-mono overflow-x-auto"><code id="diag-code">${escapeHtml(DIAGRAM_NODES[selectedNode].code)}</code></pre>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderEightStepWorkflowHtml() {
+      return `
+        <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-sm space-y-5">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <div>
+              <h2 class="text-lg font-bold text-navyBar dark:text-white">8-Step End-to-End Execution Workflow</h2>
+              <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Click any of the 8 workflow stages to inspect its code and responsibilities.</p>
+            </div>
+            <span class="text-xs font-mono text-emerald-700 dark:text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 px-3 py-1 rounded-full font-semibold">
+              8 Pipeline Stages
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+            ${EIGHT_STEPS.map((st, i) => `
+              <button type="button" data-wf-step="${i}"
+                      class="wf-step-btn text-left rounded-xl border ${i === 0 ? "border-cyanBand ring-2 ring-cyanBand/30 bg-sky-50/60 dark:bg-sky-950/30" : "border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950"} p-3.5 transition cursor-pointer">
+                <div class="flex items-center justify-between gap-2 mb-1.5">
+                  <span class="rounded bg-navyBar text-white font-mono text-[11px] font-bold px-2 py-0.5">STEP ${st.num}</span>
+                  <span class="font-mono text-[11px] text-cyan-700 dark:text-cyan-300 font-semibold">${escapeHtml(st.tag)}</span>
+                </div>
+                <div class="text-sm font-bold text-slate-900 dark:text-white">${escapeHtml(st.name)}</div>
+                <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">${escapeHtml(st.desc)}</p>
+              </button>
+            `).join("")}
+          </div>
+
+          <div id="wf-step-detail" class="rounded-xl bg-slate-950 text-slate-100 p-4 border border-slate-800">
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <span id="wf-detail-title" class="text-xs sm:text-sm font-mono font-bold text-sky-300">Step 01: GitHub Actions Trigger</span>
+              <span id="wf-detail-tag" class="text-xs font-mono text-slate-400">api-tests.yml</span>
+            </div>
+            <pre class="text-xs font-mono overflow-x-auto leading-relaxed"><code id="wf-detail-code">${escapeHtml(EIGHT_STEPS[0].code)}</code></pre>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCiSummaryMetricsHtml(presetKey = "run30") {
+      const presets = {
+        run30: { run: "Run #30 (Manual dispatch)", total: 2, passed: 2, failed: 0, skipped: 0, duration: "1.84s", env: "staging" },
+        run29: { run: "Run #29 (Workflow update)", total: 2, passed: 2, failed: 0, skipped: 0, duration: "1.92s", env: "staging" },
+        run28: { run: "Run #28 (Settings refactoring)", total: 2, passed: 2, failed: 0, skipped: 0, duration: "1.76s", env: "dev" },
+        run27: { run: "Run #27 (API client setup)", total: 2, passed: 2, failed: 0, skipped: 0, duration: "2.05s", env: "staging" },
+        run26: { run: "Run #26 (Dependency updates)", total: 2, passed: 2, failed: 0, skipped: 0, duration: "2.18s", env: "staging" },
+      };
+      const cur = presets[presetKey] || presets.run30;
+      const rate = cur.passed + cur.failed > 0 ? ((cur.passed / (cur.passed + cur.failed)) * 100).toFixed(1) : "0.0";
+
+      return `
+        <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-sm space-y-5">
+          <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+            <div>
+              <h2 class="text-lg font-bold text-navyBar dark:text-white">Publish CI Results — Execution Summary</h2>
+              <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Interactive CI execution summary across verified runs (#26–#30).</p>
+            </div>
+            <div class="flex flex-wrap gap-1.5">
+              ${Object.entries(presets).map(([k, v]) => `
+                <button type="button" data-ci-preset="${k}"
+                        class="ci-preset-btn rounded-lg px-3 py-1.5 text-xs font-semibold cursor-pointer transition ${k === presetKey ? "bg-navyBar text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"}">
+                  ${escapeHtml(v.run.split(" (")[0])} (${v.env})
+                </button>
+              `).join("")}
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
+            <div class="rounded-xl bg-navyBar text-white p-4">
+              <div class="text-[11px] font-bold uppercase tracking-wider text-sky-200">Total Test Cases</div>
+              <div id="m-total" class="text-2xl sm:text-3xl font-extrabold font-mono mt-1">${cur.total}</div>
+              <div class="text-xs text-sky-200 mt-1">Collected by Pytest</div>
+            </div>
+            <div class="rounded-xl bg-emerald-950 text-white p-4 border border-emerald-700/60">
+              <div class="text-[11px] font-bold uppercase tracking-wider text-emerald-300">Passed Tests</div>
+              <div id="m-passed" class="text-2xl sm:text-3xl font-extrabold font-mono text-emerald-400 mt-1">${cur.passed}</div>
+              <div id="m-rate" class="text-xs text-emerald-200 mt-1">${rate}% pass rate</div>
+            </div>
+            <div class="rounded-xl bg-slate-900 text-white p-4 border border-slate-700">
+              <div class="text-[11px] font-bold uppercase tracking-wider text-rose-300">Failed Tests</div>
+              <div id="m-failed" class="text-2xl sm:text-3xl font-extrabold font-mono text-rose-400 mt-1">${cur.failed}</div>
+              <div class="text-xs text-slate-400 mt-1">Assertions &amp; schemas</div>
+            </div>
+            <div class="rounded-xl bg-slate-900 text-white p-4 border border-slate-700">
+              <div class="text-[11px] font-bold uppercase tracking-wider text-amber-300">Skipped Tests</div>
+              <div id="m-skipped" class="text-2xl sm:text-3xl font-extrabold font-mono text-amber-300 mt-1">${cur.skipped}</div>
+              <div class="text-xs text-slate-400 mt-1">Skipped / deselected</div>
+            </div>
+            <div class="rounded-xl bg-slate-900 text-white p-4 border border-slate-700">
+              <div class="text-[11px] font-bold uppercase tracking-wider text-cyan-300">Execution Duration</div>
+              <div id="m-duration" class="text-2xl sm:text-3xl font-extrabold font-mono text-cyan-300 mt-1">${cur.duration}</div>
+              <div class="text-xs text-slate-400 mt-1">Suite runtime</div>
+            </div>
+            <div class="rounded-xl bg-cyanBand text-white p-4">
+              <div class="text-[11px] font-bold uppercase tracking-wider text-sky-950">Environment Tested</div>
+              <div id="m-env" class="text-2xl sm:text-3xl font-extrabold font-mono uppercase mt-1">${cur.env}</div>
+              <div id="m-run" class="text-xs font-semibold text-sky-950 mt-1">${escapeHtml(cur.run)}</div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 pt-3 border-t border-slate-200 dark:border-slate-800">
+            <div>
+              <label for="ci-in-total" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Total test cases</label>
+              <input id="ci-in-total" type="number" min="0" value="${cur.total}" class="ci-edit w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-1.5 text-sm font-mono" />
+            </div>
+            <div>
+              <label for="ci-in-passed" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Passed tests</label>
+              <input id="ci-in-passed" type="number" min="0" value="${cur.passed}" class="ci-edit w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-1.5 text-sm font-mono" />
+            </div>
+            <div>
+              <label for="ci-in-failed" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Failed tests</label>
+              <input id="ci-in-failed" type="number" min="0" value="${cur.failed}" class="ci-edit w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-1.5 text-sm font-mono" />
+            </div>
+            <div>
+              <label for="ci-in-skipped" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Skipped tests</label>
+              <input id="ci-in-skipped" type="number" min="0" value="${cur.skipped}" class="ci-edit w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-1.5 text-sm font-mono" />
+            </div>
+            <div>
+              <label for="ci-in-duration" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Execution duration</label>
+              <input id="ci-in-duration" type="text" value="${cur.duration}" class="ci-edit w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-1.5 text-sm font-mono" />
+            </div>
+            <div>
+              <label for="ci-in-env" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Environment tested</label>
+              <select id="ci-in-env" class="ci-edit w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-1.5 text-sm font-mono">
+                <option value="staging" ${cur.env === "staging" ? "selected" : ""}>staging</option>
+                <option value="dev" ${cur.env === "dev" ? "selected" : ""}>dev</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderAllureViewsHtml() {
+      return `
+        <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-sm space-y-5">
+          <div>
+            <h2 class="text-lg font-bold text-navyBar dark:text-white">Allure Report Visual Views &amp; Execution Telemetry</h2>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+              Visual breakdown of Allure report panels: Suites &amp; Step Trace, Results Overview, and Status / Severity / Duration Graphs.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <!-- View 1: Suites & Execution Steps -->
+            <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-4 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold uppercase text-cyanBand">Allure View 1</span>
+                <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-semibold">Suites &amp; Steps</span>
+              </div>
+              <div class="text-sm font-bold text-slate-900 dark:text-white">User Management &rarr; Retrieve User Profile</div>
+              <ul class="space-y-1.5 text-xs font-mono">
+                <li class="flex items-center justify-between rounded bg-white dark:bg-slate-900 px-2.5 py-1.5 border border-slate-200 dark:border-slate-800">
+                  <span class="text-emerald-600 dark:text-emerald-400">&#10003; GET /users/1</span>
+                  <span class="text-slate-500">112ms</span>
+                </li>
+                <li class="flex items-center justify-between rounded bg-white dark:bg-slate-900 px-2.5 py-1.5 border border-slate-200 dark:border-slate-800">
+                  <span class="text-sky-600 dark:text-sky-400">&#8862; Attachment: Request Headers</span>
+                  <span class="text-slate-500">JSON</span>
+                </li>
+                <li class="flex items-center justify-between rounded bg-white dark:bg-slate-900 px-2.5 py-1.5 border border-slate-200 dark:border-slate-800">
+                  <span class="text-sky-600 dark:text-sky-400">&#8862; Attachment: Response Body (200)</span>
+                  <span class="text-slate-500">JSON</span>
+                </li>
+                <li class="flex items-center justify-between rounded bg-white dark:bg-slate-900 px-2.5 py-1.5 border border-slate-200 dark:border-slate-800">
+                  <span class="text-emerald-600 dark:text-emerald-400">&#10003; UserResponse.model_validate()</span>
+                  <span class="text-slate-500">4ms</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- View 2: Results Overview Ring -->
+            <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-4 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold uppercase text-cyanBand">Allure View 2</span>
+                <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-sky-500/20 text-sky-700 dark:text-sky-300 font-semibold">Overview</span>
+              </div>
+              <div class="flex items-center gap-4 pt-1">
+                <div class="w-20 h-20 rounded-full flex items-center justify-center font-mono font-extrabold text-sm text-emerald-700 dark:text-emerald-300 shrink-0"
+                     style="background: conic-gradient(#22c55e 0% 100%, #334155 100% 100%); padding: 6px;">
+                  <div class="w-full h-full rounded-full bg-white dark:bg-slate-900 flex items-center justify-center">
+                    100%
+                  </div>
+                </div>
+                <div class="text-xs space-y-1">
+                  <div class="font-bold text-slate-900 dark:text-white text-sm">Environment: staging</div>
+                  <div class="text-emerald-600 dark:text-emerald-400 font-semibold">Passed: 2 &bull; Failed: 0</div>
+                  <div class="text-slate-500 dark:text-slate-400">Broken: 0 &bull; Skipped: 0</div>
+                  <div class="font-mono text-slate-500 dark:text-slate-400">Artifact: allure-results (14d)</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- View 3: Severity & Duration Bars -->
+            <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-4 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold uppercase text-cyanBand">Allure View 3</span>
+                <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 font-semibold">Graphs</span>
+              </div>
+              <div class="text-xs font-semibold text-slate-700 dark:text-slate-300">Duration &amp; Retry Distribution</div>
+              <div class="space-y-2 text-xs font-mono">
+                <div>
+                  <div class="flex justify-between mb-0.5"><span>GET /posts/1 (smoke)</span><span>0.68s</span></div>
+                  <div class="h-2 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden"><div class="h-full w-2/5 bg-emerald-500"></div></div>
+                </div>
+                <div>
+                  <div class="flex justify-between mb-0.5"><span>GET /users/1 (schema)</span><span>1.16s</span></div>
+                  <div class="h-2 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden"><div class="h-full w-3/5 bg-cyanBand"></div></div>
+                </div>
+                <div>
+                  <div class="flex justify-between mb-0.5"><span>Retry Backoff Cap</span><span>max 5s</span></div>
+                  <div class="h-2 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden"><div class="h-full w-4/5 bg-sky-600"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderSecurityWalkthroughHtml() {
+      return `
+        <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-sm space-y-4">
+          <h2 class="text-lg font-bold text-navyBar dark:text-white">GitHub Secrets &rarr; Workflow &rarr; Environment Variable Flow</h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-4">
+              <div class="text-xs font-mono font-bold text-cyanBand uppercase">1. Stored in GitHub Secrets</div>
+              <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1.5">
+                <code>CLIENT_ID</code> and <code>CLIENT_SECRET</code> are encrypted at rest under <strong>Settings &rarr; Secrets and variables &rarr; Actions</strong> and never written to tracked files.
+              </p>
+            </div>
+            <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-4">
+              <div class="text-xs font-mono font-bold text-cyanBand uppercase">2. Injected into Workflow Step</div>
+              <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1.5">
+                The <code>Run API Tests</code> step maps <code>\${{ secrets.CLIENT_ID }}</code> and <code>\${{ secrets.CLIENT_SECRET }}</code> into the runner environment at runtime while GitHub automatically masks secret values in logs.
+              </p>
+            </div>
+            <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-4">
+              <div class="text-xs font-mono font-bold text-cyanBand uppercase">3. Consumed via Settings &amp; Auth</div>
+              <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1.5">
+                <code>config/settings.py</code> reads environment variables via <code>pydantic-settings</code>, and <code>BearerTokenAuth</code> uses them in <code>core/auth_manager.py</code> to fetch and refresh Bearer tokens.
+              </p>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderEndToEndFlowWalkthroughHtml() {
+      const hops = [
+        { hop: "1. Test Entry", file: "tests/test_users.py", text: "Pytest invokes test_get_user_schema_and_business_rules(user_client) with Allure feature/story decorators." },
+        { hop: "2. Domain Client", file: "clients/user_client.py", text: "UserClient.get_user(user_id=1) constructs endpoint /users/1 and delegates to APIClient.get()." },
+        { hop: "3. Core HTTP & Retry", file: "core/http_client.py", text: "APIClient wraps httpx.Client with Tenacity retries, timeout guards, logging, and Allure attachments." },
+        { hop: "4. Authentication", file: "core/auth_manager.py", text: "BearerTokenAuth attaches Authorization: Bearer <token> and refreshes automatically if 401 is returned." },
+        { hop: "5. Configuration", file: "config/settings.py", text: "Provides base_url, timeout, max_retries, and credentials loaded from TEST_ENV (.env) and CI env vars." },
+        { hop: "6. Schema Validation", file: "models/user_models.py", text: "UserResponse.model_validate(response.json()) verifies types and email format before assertions run." },
+      ];
+      return `
+        <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-sm space-y-4">
+          <h2 class="text-lg font-bold text-navyBar dark:text-white">End-to-End Request &amp; Validation Walkthrough</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+            ${hops.map((h) => `
+              <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-4">
+                <div class="flex items-center justify-between gap-2 mb-1.5">
+                  <span class="text-xs font-bold text-navyBar dark:text-sky-300">${escapeHtml(h.hop)}</span>
+                  <span class="text-[11px] font-mono text-cyan-700 dark:text-cyan-300">${escapeHtml(h.file)}</span>
+                </div>
+                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">${escapeHtml(h.text)}</p>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    // =========================================================================
+    // 4. ALL 21 PAGE CONTENT GENERATORS
+    // =========================================================================
+    function buildPageHtml(categoryId, pageId) {
+      const cat = NAV_CATEGORIES.find((c) => c.id === categoryId) || NAV_CATEGORIES[0];
+      const pg = cat.pages.find((p) => p.id === pageId) || cat.pages[0];
+      const key = `${cat.id}/${pg.id}`;
+
+      switch (key) {
+        case "getting-started/project-overview":
+          return `
+            ${renderPageHeader(cat.title, pg.title, "Modular Python API test automation framework combining Pytest, HTTPX, Pydantic, Tenacity, Allure reporting, and GitHub Actions CI/CD across dev and staging environments.", pg.file)}
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div class="rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4">
+                <div class="text-xs font-bold uppercase text-cyanBand">Tech Stack</div>
+                <div class="text-base font-bold mt-1">Python 3.12 &bull; Pytest &bull; HTTPX</div>
+                <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">Pydantic v2 schemas, Tenacity retries, and Allure-pytest.</p>
+              </div>
+              <div class="rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4">
+                <div class="text-xs font-bold uppercase text-cyanBand">CI/CD Status</div>
+                <div class="text-base font-bold text-emerald-600 dark:text-emerald-400 mt-1">Runs #26–#30 Passing</div>
+                <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">Automated execution on push, PR, and workflow_dispatch.</p>
+              </div>
+              <div class="rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4">
+                <div class="text-xs font-bold uppercase text-cyanBand">Multi-Environment</div>
+                <div class="text-base font-bold mt-1">TEST_ENV (dev / staging)</div>
+                <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">Dynamic config/<env>.env loading via pydantic-settings.</p>
+              </div>
+              <div class="rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4">
+                <div class="text-xs font-bold uppercase text-cyanBand">Credential Safety</div>
+                <div class="text-base font-bold mt-1">GitHub Secrets</div>
+                <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">Zero hardcoded secrets; injected into runtime env vars.</p>
+              </div>
+            </div>
+            ${renderEndToEndFlowWalkthroughHtml()}
+            ${renderCiSummaryMetricsHtml("run30")}
+          `;
+
+        case "getting-started/installation-setup":
+          return `
+            ${renderPageHeader(cat.title, pg.title, "Set up a clean Python virtual environment in Git Bash or Eclipse IDE and install pinned dependencies from requirements.txt.", pg.file)}
+            ${renderCodeBlock("Local Setup & Pytest Verification (Git Bash)", `python -m venv .venv
+source .venv/Scripts/activate
+python -m pip install --upgrade pip
+python -m pip install --prefer-binary -r requirements.txt
+python -m pytest tests --collect-only -vv`)}
+            ${renderCodeBlock("requirements.txt", CODE_SNIPPETS.requirements)}
+          `;
+
+        case "getting-started/project-structure":
+          return `
+            ${renderPageHeader(cat.title, pg.title, "Layered directory layout separating configuration, authentication, transport client, domain clients, Pydantic schemas, tests, and CI workflows.", pg.file)}
+            ${renderCodeBlock("Repository Directory Tree", `rames-qa/Multi-Environment-Configuration-Secure-Credential-Management/
+├── .github/workflows/api-tests.yml
+├── config/
+│   ├── __init__.py
+│   ├── settings.py
+│   ├── dev.env
+│   └── staging.env
+├── core/
+│   ├── __init__.py
+│   ├── auth_manager.py
+│   └── http_client.py
+├── clients/
+│   ├── __init__.py
+│   └── user_client.py
+├── models/
+│   ├── __init__.py
+│   └── user_models.py
+├── tests/
+│   ├── __init__.py
+│   ├── conftest.py
+│   ├── test_health_and_users.py
+│   └── test_users.py
+├── index.html
+└── requirements.txt`)}
+          `;
+
+        case "framework-architecture/overall-architecture":
+          return `
+            ${renderPageHeader(cat.title, pg.title, "Interactive layered architecture diagram connecting testing suites, Config.file, HTTPX/Auth/Pydantic/Tenacity/Allure core modules, CI integration, four lower pillars, and target REST APIs.", pg.file)}
+            ${renderLayeredDiagramHtml("api_testing")}
+          `;
+
+        case "framework-architecture/execution-workflow":
+          return `
+            ${renderPageHeader(cat.title, pg.title, "Complete 8-stage automated workflow from GitHub Actions trigger through environment loading, credential injection, HTTPX initialization, Pytest execution, response validation, Allure reporting, and CI publishing.", pg.file)}
+            ${renderEightStepWorkflowHtml()}
+            ${renderCiSummaryMetricsHtml("run30")}
+          `;
+
+        case "framework-architecture/framework-components":
+          return `
+            ${renderPageHeader(cat.title, pg.title, "Walk through how a test flows from tests/ through clients/user_client.py, core/http_client.py, core/auth_manager.py, config/settings.py, and models/user_models.py.", pg.file)}
+            ${renderEndToEndFlowWalkthroughHtml()}
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              ${renderCodeBlock("clients/user_client.py", CODE_SNIPPETS.userClient)}
+              ${renderCodeBlock("tests/conftest.py", CODE_SNIPPETS.conftest)}
+            </div>
+          `;
+
+        case "configuration-security/environment-configuration":
+          return `
+            ${renderPageHeader(cat.title, pg.title, "Manage base URLs, auth URLs, timeouts, and retry limits across dev and staging using TEST_ENV and pydantic-settings.", pg.file)}
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              ${renderCodeBlock("config/settings.py", CODE_SNIPPETS.settings)}
+              ${renderCodeBlock("config/staging.env", CODE_SNIPPETS.stagingEnv)}
+            </div>
+          `;
+
+        case "configuration-security/secure-credential-management":
+          return `
+            ${renderPageHeader(cat.title, pg.title, "How CLIENT_ID and CLIENT_SECRET are stored in GitHub Secrets, mapped into workflow step environment variables, and consumed safely without exposing sensitive values.", pg.file)}
+            ${renderSecurityWalkthroughHtml()}
+            ${renderCodeBlock("GitHub Actions Secret Injection (.github/workflows/api-tests.yml)", `- name: Run API Tests
+  env:
+    TEST_ENV: staging
+    CLIENT_ID: \${{ secrets.CLIENT_ID }}
+    CLIENT_SECRET: \${{ secrets.CLIENT_SECRET }}
+  run: |
+    python -m pytest tests -vv -s --alluredir=allure-results`)}
+          `;
+
+        case "configuration-security/authentication-management":
+          return `
+            ${renderPageHeader(cat.title, pg.title, "BearerTokenAuth subclasses httpx.Auth to fetch bearer tokens, attach Authorization headers, and automatically refresh on HTTP 401 responses.", pg.file)}
+            ${renderCodeBlock("core/auth_manager.py", CODE_SNIPPETS.authManager)}
+          `;
+
+        case "api-automation/http-client-api-communication":
+          return `
+            ${renderPageHeader(cat.title, pg.title, "APIClient wraps httpx.Client with configurable timeouts, default JSON headers, get()/post()/request() methods, Tenacity retries, and Allure attachments.", pg.file)}
+            ${renderCodeBlock("core/http_client.py", CODE_SNIPPETS.httpClient)}
+          `;
+
+        case "api-automation/test-case-implementation":
+          return `
+            ${renderPageHeader(cat.title, pg.title, "Write readable, maintainable Pytest test cases using session fixtures, Allure feature/story metadata, and Pydantic response validation.", pg.file)}
+            ${renderCodeBlock("tests/test_users.py", CODE_SNIPPETS.testUsers)}
+          `;
+
+        case "api-automation/request-response-validation":
+          return `
+            ${renderPageHeader(cat.title, pg.title, "Verify HTTP status codes, outgoing request headers, response payloads, and domain assertions across test cases.", pg.file)}
+            ${renderCodeBlock("Status, Schema & Assertion Checks", `def test_user_validation(user_client):
+    response = user_client.get_user(user_id=1)
     assert response.status_code == 200, f"Expected 200, got {response.status_code}"
     user = UserResponse.model_validate(response.json())
     assert user.id == 1
-    assert "@" in user.email`
-      },
-      step_7: {
-        badge: "Execution Step 07 of 08",
-        title: "7. Generate Allure Reports",
-        path: "core/http_client.py & allure-results/",
-        desc: "Records Allure feature/story labels, request step names, serialized request headers, and response bodies into allure-results/.",
-        nodeKey: "reporting",
-        code: `with allure.step(f"{method.upper()} {endpoint}"):
-    response = self.client.request(method, endpoint, **kwargs)
-    allure.attach(
-        json.dumps(dict(response.request.headers), indent=2),
-        name="Request Headers",
-        attachment_type=allure.attachment_type.JSON,
-    )
-    allure.attach(
-        response.text,
-        name=f"Response Body ({response.status_code})",
-        attachment_type=allure.attachment_type.JSON,
-    )`
-      },
-      step_8: {
-        badge: "Execution Step 08 of 08",
-        title: "8. Publish CI Results",
-        path: ".github/workflows/api-tests.yml",
-        desc: "Uploads allure-results/ via actions/upload-artifact@v5 with if: always() and 14-day retention, reporting total, passed, failed, skipped, duration, and environment.",
-        nodeKey: "defect_tracking",
-        code: `- name: Upload Allure Results
-  if: always()
-  uses: actions/upload-artifact@v5
-  with:
-    name: allure-results
-    path: allure-results/
-    if-no-files-found: warn
-    retention-days: 14`
-      },
-    };
+    assert "@" in user.email`)}
+          `;
 
-    const nodesMap = {
-      functional: {
-        badge: "Diagram Module • Step 06",
-        title: "Functional Testing",
-        path: "tests/test_health_and_users.py",
-        desc: "Verifies environment state and single-resource GET endpoint functionality.",
-        code: `def test_get_post_by_id(api_client):
-    assert settings.env in ["dev", "staging"]
-    response = api_client.get("/posts/1")
-    assert response.status_code == 200`
-      },
-      api_testing: {
-        badge: "Diagram Module • Step 06",
-        title: "Webservices / API Testing",
-        path: "tests/test_users.py",
-        desc: "Executes REST user profile requests and validates schema & business rules.",
-        code: `response = user_client.get_user(user_id=1)
-assert response.status_code == 200
-user = UserResponse.model_validate(response.json())
-assert user.id == 1`
-      },
-      smoke_suite: {
-        badge: "Diagram Module • Step 05",
-        title: "Health & Smoke Suite",
-        path: "tests/test_health_and_users.py",
-        desc: "Fast smoke test checking active TEST_ENV and /posts/1 response body.",
-        code: `TEST_ENV=staging python -m pytest tests/test_health_and_users.py -vv -s`
-      },
-      schema_validation: {
-        badge: "Diagram Module • Step 06",
-        title: "Schema & Contract Validation",
-        path: "models/user_models.py",
-        desc: "Pydantic UserResponse model validating id, name, email, and optional role.",
-        code: `class UserResponse(BaseModel):
-    id: int
-    name: str
-    email: EmailStr
-    role: str | None = None`
-      },
-      regression: {
-        badge: "Diagram Module • Step 05",
-        title: "Regression Testing",
-        path: ".github/workflows/api-tests.yml",
-        desc: "Automated Pytest regression suite executed in GitHub Actions (Runs #26–#30 passing).",
-        code: `python -m pytest tests -vv -s --alluredir=allure-results`
-      },
-      multi_env: {
-        badge: "Diagram Module • Step 02",
-        title: "Multi-Env Compatibility",
-        path: "config/staging.env",
-        desc: "Environment-specific settings for staging and dev execution.",
-        code: `BASE_URL=https://jsonplaceholder.typicode.com
-AUTH_URL=https://jsonplaceholder.typicode.com/posts
-TIMEOUT=10.0
-MAX_RETRIES=2`
-      },
-      config_file: {
-        badge: "Diagram Module • Step 02",
-        title: "Config.file (Settings Loader)",
-        path: "config/settings.py",
-        desc: "Loads TEST_ENV configuration and credentials via pydantic-settings.",
-        code: `settings = Settings()`
-      },
-      http_client: {
-        badge: "Diagram Module • Step 04",
-        title: "HTTPX Client Accelerators",
-        path: "core/http_client.py",
-        desc: "Wraps httpx.Client with get(), post(), and request() helpers.",
-        code: `def get(self, endpoint: str, **kwargs):
-    return self.request("GET", endpoint, **kwargs)`
-      },
-      auth_manager: {
-        badge: "Diagram Module • Step 03",
-        title: "Bearer Token Auth Client",
-        path: "core/auth_manager.py",
-        desc: "Handles token retrieval and automatic 401 refresh flow.",
-        code: `class BearerTokenAuth(httpx.Auth):
-    pass`
-      },
-      pydantic_models: {
-        badge: "Diagram Module • Step 06",
-        title: "Pydantic Schemas",
-        path: "models/user_models.py",
-        desc: "Enforces typed response contracts across API tests.",
-        code: `user = UserResponse.model_validate(response.json())`
-      },
-      tenacity_retry: {
-        badge: "Diagram Module • Step 04",
-        title: "Tenacity Retry Engine",
-        path: "core/http_client.py",
-        desc: "Retries transient transport and timeout failures with exponential backoff.",
-        code: `@retry(stop=stop_after_attempt(settings.max_retries))`
-      },
-      allure_logs: {
-        badge: "Diagram Module • Step 07",
-        title: "Logs & Allure Attachments",
-        path: "core/http_client.py",
-        desc: "Attaches request headers and response payloads to Allure steps.",
-        code: `allure.attach(response.text, name="Response Body", attachment_type=allure.attachment_type.JSON)`
-      },
-      ci_integration: {
-        badge: "Diagram Module • Step 01",
-        title: "CI Integration (GitHub Actions)",
-        path: ".github/workflows/api-tests.yml",
-        desc: "Runs automated Pytest suite on GitHub Actions runners.",
-        code: `runs-on: ubuntu-latest`
-      },
-      test_execution: {
-        badge: "Diagram Module • Step 05",
-        title: "Test Scripts Execution",
-        path: "tests/conftest.py",
-        desc: "Provides session fixtures for API and domain clients.",
-        code: `@pytest.fixture(scope="session")
-def user_client(api_client):
-    return UserClient(api_client)`
-      },
-      defect_tracking: {
-        badge: "Diagram Module • Step 08",
-        title: "Defect Tracking & Artifacts",
-        path: ".github/workflows/api-tests.yml",
-        desc: "Uploads allure-results artifacts for failure triage and auditability.",
-        code: `uses: actions/upload-artifact@v5`
-      },
-      test_data: {
-        badge: "Diagram Module • Step 02",
-        title: "Test Data & Dependencies",
-        path: "requirements.txt",
-        desc: "Pinned Python packages including pytest, httpx, pydantic, tenacity, allure-pytest, and faker.",
-        code: `pytest==8.3.3
-httpx==0.27.2
-pydantic==2.9.2`
-      },
-      endpoint_repo: {
-        badge: "Diagram Module • Step 04",
-        title: "Endpoint Repository",
-        path: "clients/user_client.py",
-        desc: "Encapsulates /users/{user_id} and /users API calls.",
-        code: `def get_user(self, user_id: int):
-    return self.api.get(f"/users/{user_id}")`
-      },
-      actions_controller: {
-        badge: "Diagram Module • Step 04",
-        title: "Actions Controller",
-        path: "core/http_client.py",
-        desc: "Executes HTTP requests, retries, logging, and Allure attachments.",
-        code: `response = self.client.request(method, endpoint, **kwargs)`
-      },
-      reporting: {
-        badge: "Diagram Module • Step 07",
-        title: "Reporting (Allure Results)",
-        path: "allure-results/",
-        desc: "Stores generated Allure execution files for reporting.",
-        code: `allure serve allure-results`
-      },
-      target_apis: {
-        badge: "Diagram Module • Step 02",
-        title: "Application Under Test",
-        path: "config/staging.env",
-        desc: "Target REST API base URL under test.",
-        code: `BASE_URL=https://jsonplaceholder.typicode.com`
-      },
-    };
+        case "api-automation/schema-validation":
+          return `
+            ${renderPageHeader(cat.title, pg.title, "Enforce response structure and types using Pydantic BaseModel and EmailStr while keeping optional fields like role safely nullable.", pg.file)}
+            ${renderCodeBlock("models/user_models.py", CODE_SNIPPETS.userModel)}
+          `;
 
-    const stepOrder = Object.keys(workflowSteps);
-    let currentStepIndex = 0;
+        case "api-automation/test-data-management":
+          return `
+            ${renderPageHeader(cat.title, pg.title, "Combine environment-specific configuration files, parameterized test inputs, and Faker for deterministic and synthetic test payloads.", pg.file)}
+            ${renderCodeBlock("Environment & Payload Example", `TEST_ENV=staging python -m pytest tests -vv -s`)}
+          `;
 
-    const badgeEl = document.getElementById("inspector-badge");
-    const titleEl = document.getElementById("inspector-title");
-    const pathEl = document.getElementById("inspector-path");
-    const descEl = document.getElementById("inspector-desc");
-    const codeEl = document.getElementById("inspector-code");
+        case "reliability-debugging/retry-mechanism":
+          return `
+            ${renderPageHeader(cat.title, pg.title, "Configure exponential backoff retries via tenacity on transient httpx.TransportError and httpx.TimeoutException exceptions.", pg.file)}
+            ${renderCodeBlock("Tenacity Retry Decorator in APIClient.request", `@retry(
+    stop=stop_after_attempt(settings.max_retries),
+    wait=wait_exponential(multiplier=1, min=1, max=5),
+    retry=retry_if_exception_type((httpx.TransportError, httpx.TimeoutException)),
+    reraise=True,
+)`)}
+          `;
 
-    const stepCards = document.querySelectorAll(".workflow-step-card[data-step]");
-    const diagButtons = document.querySelectorAll(".diag-node[data-node]");
+        case "reliability-debugging/error-handling":
+          return `
+            ${renderPageHeader(cat.title, pg.title, "Handle 401 token expiration, schema validation errors, missing test collection (exit code 4), and Git rebase conflicts cleanly.", pg.file)}
+            <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-sm overflow-x-auto">
+              <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                <thead>
+                  <tr class="border-b border-slate-200 dark:border-slate-800 text-navyBar dark:text-sky-300">
+                    <th class="py-2.5 pr-4">Scenario</th>
+                    <th class="py-2.5 pr-4">Behavior / Cause</th>
+                    <th class="py-2.5">Resolution</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200 dark:divide-slate-800 text-slate-600 dark:text-slate-300">
+                  <tr>
+                    <td class="py-2.5 pr-4 font-mono font-semibold">401 Unauthorized</td>
+                    <td class="py-2.5 pr-4">Expired bearer token</td>
+                    <td class="py-2.5">BearerTokenAuth fetches a new token and retries once</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 pr-4 font-mono font-semibold">Pytest Exit Code 4</td>
+                    <td class="py-2.5 pr-4">0 tests collected or missing plugin</td>
+                    <td class="py-2.5">Verify tests/test_*.py and install allure-pytest</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 pr-4 font-mono font-semibold">Git Push Rejected</td>
+                    <td class="py-2.5 pr-4">Remote main ahead of local branch</td>
+                    <td class="py-2.5 font-mono">git pull origin main --rebase</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          `;
 
-    function highlightDiagramNode(nodeKey) {
-      diagButtons.forEach((btn) => {
-        if (btn.getAttribute("data-node") === nodeKey) {
-          btn.classList.add("active-node");
-        } else {
-          btn.classList.remove("active-node");
-        }
-      });
-    }
+        case "reliability-debugging/logging-debugging":
+          return `
+            ${renderPageHeader(cat.title, pg.title, "Inspect live test collection, verbose Pytest output, structured logger statements, and attached JSON headers/responses in Allure.", pg.file)}
+            ${renderCodeBlock("Collection & Verbose Execution Commands", `python -m pytest tests --collect-only -vv
+TEST_ENV=staging python -m pytest tests -vv -s --alluredir=allure-results`)}
+          `;
 
-    function selectWorkflowStep(stepKey) {
-      const step = workflowSteps[stepKey];
-      if (!step) return;
+        case "reporting-cicd/allure-reporting":
+          return `
+            ${renderPageHeader(cat.title, pg.title, "Generate allure-results during test runs, inspect Suites, Overview, and Graphs views, and serve interactive Allure reports locally.", pg.file)}
+            ${renderAllureViewsHtml()}
+            ${renderCodeBlock("Serve Allure Report Locally", `allure serve allure-results`)}
+          `;
 
-      const idx = stepOrder.indexOf(stepKey);
-      if (idx !== -1) currentStepIndex = idx;
+        case "reporting-cicd/github-actions-integration":
+          return `
+            ${renderPageHeader(cat.title, pg.title, "Complete GitHub Actions workflow (.github/workflows/api-tests.yml) installing dependencies, verifying collection, running Pytest, and uploading Allure artifacts.", pg.file)}
+            ${renderCodeBlock(".github/workflows/api-tests.yml", CODE_SNIPPETS.workflowYml)}
+          `;
 
-      badgeEl.textContent = step.badge;
-      titleEl.textContent = step.title;
-      pathEl.textContent = step.path;
-      descEl.textContent = step.desc;
-      codeEl.textContent = step.code;
+        case "reporting-cicd/automated-test-execution":
+          return `
+            ${renderPageHeader(cat.title, pg.title, "Verified GitHub Actions execution history across Runs #26–#30 with dependency checks, collection debugging, test execution, and artifact upload.", pg.file)}
+            ${renderEightStepWorkflowHtml()}
+            <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-sm overflow-x-auto">
+              <h3 class="text-base font-bold text-navyBar dark:text-white mb-3">Verified CI Workflow Runs (#26–#30)</h3>
+              <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                <thead>
+                  <tr class="border-b border-slate-200 dark:border-slate-800 text-navyBar dark:text-sky-300">
+                    <th class="py-2 pr-4">Run</th>
+                    <th class="py-2 pr-4">Milestone</th>
+                    <th class="py-2 pr-4">Environment</th>
+                    <th class="py-2">Status</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200 dark:divide-slate-800 text-slate-600 dark:text-slate-300">
+                  <tr><td class="py-2 pr-4 font-mono font-bold">#30</td><td class="py-2 pr-4">Manual workflow_dispatch trigger</td><td class="py-2 pr-4 font-mono">staging</td><td class="py-2"><span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">Successful</span></td></tr>
+                  <tr><td class="py-2 pr-4 font-mono font-bold">#29</td><td class="py-2 pr-4">Workflow configuration update</td><td class="py-2 pr-4 font-mono">staging</td><td class="py-2"><span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">Successful</span></td></tr>
+                  <tr><td class="py-2 pr-4 font-mono font-bold">#28</td><td class="py-2 pr-4">Settings refactoring</td><td class="py-2 pr-4 font-mono">dev</td><td class="py-2"><span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">Successful</span></td></tr>
+                  <tr><td class="py-2 pr-4 font-mono font-bold">#27</td><td class="py-2 pr-4">API client setup</td><td class="py-2 pr-4 font-mono">staging</td><td class="py-2"><span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">Successful</span></td></tr>
+                  <tr><td class="py-2 pr-4 font-mono font-bold">#26</td><td class="py-2 pr-4">Dependency updates</td><td class="py-2 pr-4 font-mono">staging</td><td class="py-2"><span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">Successful</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          `;
 
-      stepCards.forEach((card) => {
-        if (card.getAttribute("data-step") === stepKey) {
-          card.classList.add("active-step");
-        } else {
-          card.classList.remove("active-step");
-        }
-      });
-
-      if (step.nodeKey) {
-        highlightDiagramNode(step.nodeKey);
+        case "reporting-cicd/test-results-dashboard":
+        default:
+          return `
+            ${renderPageHeader(cat.title, pg.title, "Track total test cases, passed tests, failed tests, skipped tests, execution duration, and environment tested across CI runs.", pg.file)}
+            ${renderCiSummaryMetricsHtml("run30")}
+            ${renderAllureViewsHtml()}
+          `;
       }
     }
 
-    function selectDiagramNode(nodeKey) {
-      const node = nodesMap[nodeKey];
-      if (!node) return;
+    // =========================================================================
+    // 5. SIDEBAR, ROUTING, THEME, VIEWPORT & INTERACTIVITY CONTROLLER
+    // =========================================================================
+    const sidebarNavEl = document.getElementById("sidebar-nav");
+    const pageContentEl = document.getElementById("page-content");
+    const breadcrumbEl = document.getElementById("breadcrumb");
+    const routeBadgeEl = document.getElementById("page-route-badge");
+    const prevPageBtn = document.getElementById("prev-page-btn");
+    const nextPageBtn = document.getElementById("next-page-btn");
+    const prevPageTitleEl = document.getElementById("prev-page-title");
+    const nextPageTitleEl = document.getElementById("next-page-title");
 
-      badgeEl.textContent = node.badge;
-      titleEl.textContent = node.title;
-      pathEl.textContent = node.path;
-      descEl.textContent = node.desc;
-      codeEl.textContent = node.code;
+    // Track expanded categories (all expanded by default, collapsible individually or in bulk)
+    const expandedCategories = new Set(NAV_CATEGORIES.map((c) => c.id));
 
-      highlightDiagramNode(nodeKey);
-      stepCards.forEach((card) => card.classList.remove("active-step"));
+    function parseHash() {
+      const raw = (window.location.hash || "#/getting-started/project-overview").replace(/^#\/?/, "");
+      const parts = raw.split("/").filter(Boolean);
+      const catId = parts[0] || "getting-started";
+      const pgId = parts[1] || "project-overview";
+
+      const matchedCat = NAV_CATEGORIES.find((c) => c.id === catId) || NAV_CATEGORIES[0];
+      const matchedPage = matchedCat.pages.find((p) => p.id === pgId) || matchedCat.pages[0];
+
+      return { categoryId: matchedCat.id, pageId: matchedPage.id };
     }
 
-    stepCards.forEach((card) => {
-      card.addEventListener("click", () => {
-        const key = card.getAttribute("data-step");
-        selectWorkflowStep(key);
-        if (key === "step_8") {
-          document.getElementById("publish-ci-results").scrollIntoView({ behavior: "smooth", block: "nearest" });
-        }
-      });
-    });
+    function renderSidebar(activeCategoryId, activePageId) {
+      sidebarNavEl.innerHTML = NAV_CATEGORIES.map((cat) => {
+        const isOpen = expandedCategories.has(cat.id);
+        return `
+          <div class="rounded-xl border border-slate-200/80 dark:border-slate-800/90 bg-slate-50/70 dark:bg-slate-950/50 overflow-hidden">
+            <button type="button" data-cat-toggle="${cat.id}" aria-expanded="${isOpen}"
+                    class="w-full flex items-center justify-between gap-2 px-3 py-2.5 text-left text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition cursor-pointer">
+              <span>${escapeHtml(cat.title)}</span>
+              <span class="font-mono text-sm text-cyanBand">${isOpen ? "−" : "+"}</span>
+            </button>
+            <div class="${isOpen ? "block" : "hidden"} px-2 pb-2 pt-0.5 space-y-1">
+              ${cat.pages.map((pg) => {
+                const isActive = cat.id === activeCategoryId && pg.id === activePageId;
+                return `
+                  <a href="#/${cat.id}/${pg.id}" data-nav-link="${cat.id}/${pg.id}"
+                     class="flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-xs sm:text-[13px] font-medium transition ${
+                       isActive
+                         ? "bg-navyBar text-white font-semibold shadow-xs"
+                         : "text-slate-700 dark:text-slate-300 hover:bg-sky-500/10 hover:text-cyanBand"
+                     }">
+                    <span class="truncate">${escapeHtml(pg.title)}</span>
+                    <span class="text-[10px] font-mono ${isActive ? "text-sky-200" : "text-slate-400 dark:text-slate-500"} shrink-0">${escapeHtml(pg.file)}</span>
+                  </a>
+                `;
+              }).join("")}
+            </div>
+          </div>
+        `;
+      }).join("");
 
-    diagButtons.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        selectDiagramNode(btn.getAttribute("data-node"));
-      });
-    });
-
-    document.getElementById("prev-step-btn").addEventListener("click", () => {
-      currentStepIndex = (currentStepIndex - 1 + stepOrder.length) % stepOrder.length;
-      selectWorkflowStep(stepOrder[currentStepIndex]);
-    });
-
-    document.getElementById("next-step-btn").addEventListener("click", () => {
-      currentStepIndex = (currentStepIndex + 1) % stepOrder.length;
-      selectWorkflowStep(stepOrder[currentStepIndex]);
-    });
-
-    // Publish CI Results Summary Logic
-    const runPresets = {
-      run30: { label: "Workflow Run #30 (Manual dispatch)", total: 2, passed: 2, failed: 0, skipped: 0, duration: "1.84s", env: "staging" },
-      run29: { label: "Workflow Run #29 (Workflow update)", total: 2, passed: 2, failed: 0, skipped: 0, duration: "1.92s", env: "staging" },
-      run28: { label: "Workflow Run #28 (Settings refactoring)", total: 2, passed: 2, failed: 0, skipped: 0, duration: "1.76s", env: "dev" },
-      run27: { label: "Workflow Run #27 (API client setup)", total: 2, passed: 2, failed: 0, skipped: 0, duration: "2.05s", env: "staging" },
-      run26: { label: "Workflow Run #26 (Dependency updates)", total: 2, passed: 2, failed: 0, skipped: 0, duration: "2.18s", env: "staging" },
-    };
-
-    const inputTotal = document.getElementById("input-total");
-    const inputPassed = document.getElementById("input-passed");
-    const inputFailed = document.getElementById("input-failed");
-    const inputSkipped = document.getElementById("input-skipped");
-    const inputDuration = document.getElementById("input-duration");
-    const inputEnv = document.getElementById("input-env");
-
-    const metricTotal = document.getElementById("metric-total");
-    const metricPassed = document.getElementById("metric-passed");
-    const metricFailed = document.getElementById("metric-failed");
-    const metricSkipped = document.getElementById("metric-skipped");
-    const metricDuration = document.getElementById("metric-duration");
-    const metricEnv = document.getElementById("metric-env");
-    const metricPassRate = document.getElementById("metric-pass-rate");
-    const metricRunLabel = document.getElementById("metric-run-label");
-
-    function syncCiMetrics(runLabelText) {
-      const total = Math.max(0, parseInt(inputTotal.value, 10) || 0);
-      const passed = Math.max(0, parseInt(inputPassed.value, 10) || 0);
-      const failed = Math.max(0, parseInt(inputFailed.value, 10) || 0);
-      const skipped = Math.max(0, parseInt(inputSkipped.value, 10) || 0);
-      const duration = (inputDuration.value || "0.00s").trim();
-      const env = (inputEnv.value || "staging").trim();
-
-      metricTotal.textContent = String(total);
-      metricPassed.textContent = String(passed);
-      metricFailed.textContent = String(failed);
-      metricSkipped.textContent = String(skipped);
-      metricDuration.textContent = duration;
-      metricEnv.textContent = env;
-
-      const denominator = passed + failed;
-      const rate = denominator > 0 ? ((passed / denominator) * 100).toFixed(1) : "0.0";
-      metricPassRate.textContent = `${rate}% pass rate`;
-
-      if (runLabelText) {
-        metricRunLabel.textContent = runLabelText;
-      } else {
-        metricRunLabel.textContent = `Custom CI Summary (${env})`;
-      }
-    }
-
-    document.querySelectorAll(".preset-btn[data-preset]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const key = btn.getAttribute("data-preset");
-        const preset = runPresets[key];
-        if (!preset) return;
-
-        inputTotal.value = String(preset.total);
-        inputPassed.value = String(preset.passed);
-        inputFailed.value = String(preset.failed);
-        inputSkipped.value = String(preset.skipped);
-        inputDuration.value = preset.duration;
-        inputEnv.value = preset.env;
-
-        document.querySelectorAll(".preset-btn[data-preset]").forEach((b) => {
-          b.classList.remove("bg-navyBar", "text-white");
-          b.classList.add("bg-slate-100", "text-slate-800", "border", "border-slate-300");
+      sidebarNavEl.querySelectorAll("[data-cat-toggle]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const cid = btn.getAttribute("data-cat-toggle");
+          if (expandedCategories.has(cid)) {
+            expandedCategories.delete(cid);
+          } else {
+            expandedCategories.add(cid);
+          }
+          const cur = parseHash();
+          renderSidebar(cur.categoryId, cur.pageId);
         });
-        btn.classList.remove("bg-slate-100", "text-slate-800", "border", "border-slate-300");
-        btn.classList.add("bg-navyBar", "text-white");
+      });
 
-        syncCiMetrics(preset.label);
+      sidebarNavEl.querySelectorAll("[data-nav-link]").forEach((link) => {
+        link.addEventListener("click", () => {
+          closeMobileSidebar();
+        });
+      });
+    }
+
+    function bindDynamicPageInteractions() {
+      // Copy buttons
+      pageContentEl.querySelectorAll(".copy-btn[data-copy-target]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const codeEl = document.getElementById(btn.getAttribute("data-copy-target"));
+          if (!codeEl) return;
+          const ta = document.createElement("textarea");
+          ta.value = codeEl.textContent || "";
+          ta.setAttribute("readonly", "");
+          ta.style.position = "fixed";
+          ta.style.opacity = "0";
+          document.body.appendChild(ta);
+          ta.select();
+          try {
+            document.execCommand("copy");
+            showToast("Code copied to clipboard");
+          } catch (e) {
+            showToast("Unable to copy in this browser");
+          }
+          document.body.removeChild(ta);
+        });
+      });
+
+      // Layered Diagram Node clicks
+      const diagBtns = pageContentEl.querySelectorAll("[data-diag]");
+      if (diagBtns.length > 0) {
+        diagBtns.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const key = btn.getAttribute("data-diag");
+            const info = DIAGRAM_NODES[key];
+            if (!info) return;
+            diagBtns.forEach((b) => b.classList.remove("active-node"));
+            btn.classList.add("active-node");
+            const t = document.getElementById("diag-title");
+            const f = document.getElementById("diag-file");
+            const d = document.getElementById("diag-desc");
+            const c = document.getElementById("diag-code");
+            if (t) t.textContent = info.title;
+            if (f) f.textContent = info.file;
+            if (d) d.textContent = info.desc;
+            if (c) c.textContent = info.code;
+          });
+        });
+      }
+
+      // 8-Step Workflow Step buttons
+      const wfBtns = pageContentEl.querySelectorAll("[data-wf-step]");
+      if (wfBtns.length > 0) {
+        wfBtns.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const idx = parseInt(btn.getAttribute("data-wf-step"), 10) || 0;
+            const st = EIGHT_STEPS[idx] || EIGHT_STEPS[0];
+            wfBtns.forEach((b, i) => {
+              b.classList.remove("border-cyanBand", "ring-2", "ring-cyanBand/30", "bg-sky-50/60", "dark:bg-sky-950/30");
+              b.classList.add("border-slate-200", "dark:border-slate-800", "bg-slate-50", "dark:bg-slate-950");
+              if (i === idx) {
+                b.classList.remove("border-slate-200", "dark:border-slate-800", "bg-slate-50", "dark:bg-slate-950");
+                b.classList.add("border-cyanBand", "ring-2", "ring-cyanBand/30", "bg-sky-50/60", "dark:bg-sky-950/30");
+              }
+            });
+            const dt = document.getElementById("wf-detail-title");
+            const dtag = document.getElementById("wf-detail-tag");
+            const dc = document.getElementById("wf-detail-code");
+            if (dt) dt.textContent = `Step ${st.num}: ${st.name}`;
+            if (dtag) dtag.textContent = st.tag;
+            if (dc) dc.textContent = st.code;
+          });
+        });
+      }
+
+      // CI Summary Presets & Live Inputs
+      const ciPresets = {
+        run30: { run: "Run #30 (Manual dispatch)", total: 2, passed: 2, failed: 0, skipped: 0, duration: "1.84s", env: "staging" },
+        run29: { run: "Run #29 (Workflow update)", total: 2, passed: 2, failed: 0, skipped: 0, duration: "1.92s", env: "staging" },
+        run28: { run: "Run #28 (Settings refactoring)", total: 2, passed: 2, failed: 0, skipped: 0, duration: "1.76s", env: "dev" },
+        run27: { run: "Run #27 (API client setup)", total: 2, passed: 2, failed: 0, skipped: 0, duration: "2.05s", env: "staging" },
+        run26: { run: "Run #26 (Dependency updates)", total: 2, passed: 2, failed: 0, skipped: 0, duration: "2.18s", env: "staging" },
+      };
+
+      function refreshCiMetrics(customLabel) {
+        const inTotal = document.getElementById("ci-in-total");
+        const inPassed = document.getElementById("ci-in-passed");
+        const inFailed = document.getElementById("ci-in-failed");
+        const inSkipped = document.getElementById("ci-in-skipped");
+        const inDuration = document.getElementById("ci-in-duration");
+        const inEnv = document.getElementById("ci-in-env");
+        if (!inTotal) return;
+
+        const t = Math.max(0, parseInt(inTotal.value, 10) || 0);
+        const p = Math.max(0, parseInt(inPassed.value, 10) || 0);
+        const f = Math.max(0, parseInt(inFailed.value, 10) || 0);
+        const s = Math.max(0, parseInt(inSkipped.value, 10) || 0);
+        const d = (inDuration.value || "0.00s").trim();
+        const e = (inEnv.value || "staging").trim();
+        const denom = p + f;
+        const pct = denom > 0 ? ((p / denom) * 100).toFixed(1) : "0.0";
+
+        document.getElementById("m-total").textContent = String(t);
+        document.getElementById("m-passed").textContent = String(p);
+        document.getElementById("m-failed").textContent = String(f);
+        document.getElementById("m-skipped").textContent = String(s);
+        document.getElementById("m-duration").textContent = d;
+        document.getElementById("m-env").textContent = e;
+        document.getElementById("m-rate").textContent = `${pct}% pass rate`;
+        if (customLabel) {
+          document.getElementById("m-run").textContent = customLabel;
+        }
+      }
+
+      pageContentEl.querySelectorAll("[data-ci-preset]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const pk = btn.getAttribute("data-ci-preset");
+          const pr = ciPresets[pk];
+          if (!pr) return;
+          document.getElementById("ci-in-total").value = pr.total;
+          document.getElementById("ci-in-passed").value = pr.passed;
+          document.getElementById("ci-in-failed").value = pr.failed;
+          document.getElementById("ci-in-skipped").value = pr.skipped;
+          document.getElementById("ci-in-duration").value = pr.duration;
+          document.getElementById("ci-in-env").value = pr.env;
+
+          pageContentEl.querySelectorAll("[data-ci-preset]").forEach((b) => {
+            b.classList.remove("bg-navyBar", "text-white");
+            b.classList.add("bg-slate-100", "dark:bg-slate-800", "text-slate-700", "dark:text-slate-300");
+          });
+          btn.classList.remove("bg-slate-100", "dark:bg-slate-800", "text-slate-700", "dark:text-slate-300");
+          btn.classList.add("bg-navyBar", "text-white");
+          refreshCiMetrics(pr.run);
+        });
+      });
+
+      pageContentEl.querySelectorAll(".ci-edit").forEach((inp) => {
+        inp.addEventListener("input", () => refreshCiMetrics("Custom CI Summary"));
+        inp.addEventListener("change", () => refreshCiMetrics("Custom CI Summary"));
+      });
+    }
+
+    function renderRoute() {
+      const { categoryId, pageId } = parseHash();
+      expandedCategories.add(categoryId);
+      renderSidebar(categoryId, pageId);
+
+      const flatIdx = FLAT_PAGES.findIndex((item) => item.categoryId === categoryId && item.pageId === pageId);
+      const current = FLAT_PAGES[flatIdx] || FLAT_PAGES[0];
+
+      document.title = `${current.pageTitle} — API Test Automation Framework`;
+      routeBadgeEl.textContent = current.route;
+
+      breadcrumbEl.innerHTML = `
+        <a href="#/getting-started/project-overview" class="hover:text-cyanBand font-medium">Docs</a>
+        <span>/</span>
+        <span>${escapeHtml(current.categoryTitle)}</span>
+        <span>/</span>
+        <span class="font-semibold text-navyBar dark:text-sky-300">${escapeHtml(current.pageTitle)}</span>
+      `;
+
+      pageContentEl.innerHTML = buildPageHtml(current.categoryId, current.pageId);
+      bindDynamicPageInteractions();
+
+      const prevItem = FLAT_PAGES[(flatIdx - 1 + FLAT_PAGES.length) % FLAT_PAGES.length];
+      const nextItem = FLAT_PAGES[(flatIdx + 1) % FLAT_PAGES.length];
+
+      prevPageTitleEl.textContent = prevItem.pageTitle;
+      nextPageTitleEl.textContent = nextItem.pageTitle;
+
+      prevPageBtn.onclick = () => {
+        window.location.hash = prevItem.route;
+      };
+      nextPageBtn.onclick = () => {
+        window.location.hash = nextItem.route;
+      };
+    }
+
+    // Mobile drawer toggle
+    const sidebarEl = document.getElementById("sidebar");
+    const backdropEl = document.getElementById("sidebar-backdrop");
+    const mobileMenuBtn = document.getElementById("mobile-menu-btn");
+
+    function openMobileSidebar() {
+      sidebarEl.classList.remove("-translate-x-full");
+      backdropEl.classList.remove("hidden");
+    }
+
+    function closeMobileSidebar() {
+      sidebarEl.classList.add("-translate-x-full");
+      backdropEl.classList.add("hidden");
+    }
+
+    mobileMenuBtn.addEventListener("click", () => {
+      if (sidebarEl.classList.contains("-translate-x-full")) {
+        openMobileSidebar();
+      } else {
+        closeMobileSidebar();
+      }
+    });
+    backdropEl.addEventListener("click", closeMobileSidebar);
+
+    document.getElementById("expand-all-btn").addEventListener("click", () => {
+      NAV_CATEGORIES.forEach((c) => expandedCategories.add(c.id));
+      const cur = parseHash();
+      renderSidebar(cur.categoryId, cur.pageId);
+    });
+
+    document.getElementById("collapse-all-btn").addEventListener("click", () => {
+      expandedCategories.clear();
+      const cur = parseHash();
+      renderSidebar(cur.categoryId, cur.pageId);
+    });
+
+    // Theme Toggle persisted in localStorage
+    const themeToggleBtn = document.getElementById("theme-toggle-btn");
+    const themeIconEl = document.getElementById("theme-icon");
+    const themeLabelEl = document.getElementById("theme-label");
+
+    function applyTheme(mode) {
+      const root = document.documentElement;
+      if (mode === "light") {
+        root.classList.remove("dark");
+        themeIconEl.textContent = "🌙";
+        themeLabelEl.textContent = "Dark";
+      } else {
+        root.classList.add("dark");
+        themeIconEl.textContent = "☀";
+        themeLabelEl.textContent = "Light";
+      }
+      try {
+        localStorage.setItem("api_docs_theme", mode);
+      } catch (e) {
+        // Ignore storage restrictions
+      }
+    }
+
+    let savedTheme = "dark";
+    try {
+      savedTheme = localStorage.getItem("api_docs_theme") || "dark";
+    } catch (e) {
+      savedTheme = "dark";
+    }
+    applyTheme(savedTheme);
+
+    themeToggleBtn.addEventListener("click", () => {
+      const isDark = document.documentElement.classList.contains("dark");
+      applyTheme(isDark ? "light" : "dark");
+    });
+
+    // Viewport Preview Switcher (Desktop / Tablet / Mobile)
+    const viewportFrame = document.getElementById("viewport-frame");
+    document.querySelectorAll(".vp-btn[data-viewport]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const mode = btn.getAttribute("data-viewport");
+        viewportFrame.classList.remove("max-w-7xl", "max-w-[768px]", "max-w-[390px]", "border-x", "border-cyanBand/40", "shadow-xl");
+
+        if (mode === "tablet") {
+          viewportFrame.classList.add("max-w-[768px]", "border-x", "border-cyanBand/40", "shadow-xl");
+        } else if (mode === "mobile") {
+          viewportFrame.classList.add("max-w-[390px]", "border-x", "border-cyanBand/40", "shadow-xl");
+        } else {
+          viewportFrame.classList.add("max-w-7xl");
+        }
+
+        document.querySelectorAll(".vp-btn[data-viewport]").forEach((b) => {
+          b.classList.remove("bg-cyanBand", "text-white");
+          b.classList.add("text-sky-100");
+        });
+        btn.classList.remove("text-sky-100");
+        btn.classList.add("bg-cyanBand", "text-white");
       });
     });
+    viewportFrame.classList.add("max-w-7xl");
 
-    [inputTotal, inputPassed, inputFailed, inputSkipped, inputDuration, inputEnv].forEach((el) => {
-      el.addEventListener("input", () => syncCiMetrics());
-      el.addEventListener("change", () => syncCiMetrics());
-    });
-
-    // Clipboard copy using execCommand fallback for sandboxed iframes
-    let toastTimer = null;
+    // Toast Helper
+    let toastTimeout = null;
     function showToast(msg) {
-      const toast = document.getElementById("copy-toast");
-      const toastText = document.getElementById("copy-toast-text");
+      const toast = document.getElementById("toast");
+      const toastText = document.getElementById("toast-text");
       toastText.textContent = msg;
       toast.classList.remove("hidden");
       toast.classList.add("flex");
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => {
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
         toast.classList.add("hidden");
         toast.classList.remove("flex");
       }, 2200);
     }
 
-    document.getElementById("copy-inspector-btn").addEventListener("click", () => {
-      const content = codeEl.textContent || "";
-      const ta = document.createElement("textarea");
-      ta.value = content;
-      ta.setAttribute("readonly", "");
-      ta.style.position = "fixed";
-      ta.style.opacity = "0";
-      document.body.appendChild(ta);
-      ta.select();
-      try {
-        document.execCommand("copy");
-        showToast("Copied " + pathEl.textContent.trim());
-      } catch (err) {
-        showToast("Copy failed in browser");
-      }
-      document.body.removeChild(ta);
+    // Listen to URL Hash Changes
+    window.addEventListener("hashchange", () => {
+      renderRoute();
+      window.scrollTo({ top: 0, behavior: "smooth" });
     });
 
-    // Initialize defaults
-    selectWorkflowStep("step_1");
-    syncCiMetrics(runPresets.run30.label);
+    // Initial Render
+    if (!window.location.hash) {
+      window.location.hash = "#/getting-started/project-overview";
+    }
+    renderRoute();
   </script>
 </body>
 </html>
